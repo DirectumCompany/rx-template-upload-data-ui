@@ -632,6 +632,77 @@ namespace GD.UploadData.Client
     
     #endregion
     
+    #region Контактные лица
+    
+    public void LoadContacts()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadContacts);
+      if (file == null)
+        return;
+      var contacts = GetContactsFromExcel(file);
+      contacts = Functions.Module.Remote.CreateOrUpdateContacts(contacts);
+      var contactsWithError = contacts.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (contactsWithError.Any())
+        ShowContactsLoaderReport(contactsWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count());
+    }
+    
+    public List<Structures.Module.Contact> GetContactsFromExcel(byte[] file)
+    {
+      var contacts = new List<Structures.Module.Contact>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 3)).IsEmpty())
+        {
+          var contact = Structures.Module.Contact.Create();
+          try
+          {
+            contact.FullName = string.Join(" ", range.Cell(1,1).Value.ToString().Trim(), range.Cell(1,2).Value.ToString().Trim(),
+                                           range.Cell(1,3).Value.ToString().Trim());
+            contact.LastName = range.Cell(1,1).Value.ToString().Trim();
+            contact.Name = range.Cell(1,2).Value.ToString().Trim();
+            contact.MiddleName = range.Cell(1,3).Value.ToString().Trim();
+            contact.Company = range.Cell(1,4).Value.ToString();
+            contact.JobTitle = range.Cell(1,5).Value.ToString();
+            contact.Phone = range.Cell(1,6).Value.ToString();
+            contact.Fax = range.Cell(1,7).Value.ToString();
+            contact.Email = range.Cell(1,8).Value.ToString();
+            contact.Homepage = range.Cell(1,9).Value.ToString();
+            contact.Note = range.Cell(1,10).Value.ToString();
+          }
+          catch (Exception ex)
+          {
+            contact.Error = ex.Message;
+          }
+          
+          contacts.Add(contact);
+          currentRow++;
+        }
+      }
+      return contacts;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Учетных записей".
+    /// </summary>
+    /// <param name="jobTitles">Список должностей.</param>
+    private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
+    {
+      var report = Reports.GetContactsLoaderErrorReport();
+      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}",
+                                                                        x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone, 
+                                                                        x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
     #endregion
     
     #region Загрузка классификатора обращений
@@ -1160,7 +1231,7 @@ namespace GD.UploadData.Client
     }
 
     #endregion
- 
+    
     #region Поселения с ФИАС
     
     /// <summary>

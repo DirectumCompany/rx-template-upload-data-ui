@@ -286,6 +286,10 @@
     {
       "ItemId": "4a88fab9-390b-4485-af4d-38b6cced8142",
       "PreviousItemId": "30ca125d-627b-4b65-8a83-5a8efa72bc5c"
+    },
+    {
+      "ItemId": "d44f8b28-b57d-4366-ab94-46b861d67c05",
+      "PreviousItemId": "4a88fab9-390b-4485-af4d-38b6cced8142"
     }
   ],
   "HandledEvents": [
@@ -439,7 +443,8 @@
     "Region",
     "LoadMunArea",
     "LoadSettlements",
-    "LoadMunicipalAreas"
+    "LoadMunicipalAreas",
+    "LoadContacts"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

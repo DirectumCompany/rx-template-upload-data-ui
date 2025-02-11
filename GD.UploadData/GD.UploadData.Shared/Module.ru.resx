@@ -197,4 +197,7 @@
   <data name="LoadMunicipalAreas" xml:space="preserve">
     <value>Загрузить муниципальные районы</value>
   </data>
+  <data name="LoadContacts" xml:space="preserve">
+    <value>Загрузить контакты</value>
+  </data>
 </root>

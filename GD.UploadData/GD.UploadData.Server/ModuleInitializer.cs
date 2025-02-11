@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -25,6 +25,7 @@ namespace GD.UploadData.Server
       Reports.AccessRights.Grant(Reports.GetCitiesLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       Reports.AccessRights.Grant(Reports.GetMunicipalAreasLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       Reports.AccessRights.Grant(Reports.GetSettlementsLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
+      Reports.AccessRights.Grant(Reports.GetContactsLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       
       CreateReportsTables();
     }
@@ -40,6 +41,7 @@ namespace GD.UploadData.Server
       var jobTitlesLoaderErrorReportTableName = Constants.JobTitlesLoaderErrorReport.SourceTableName;
       var businessUnitsLoaderErrorReportTableName = Constants.BusinessUnitsLoaderErrorReport.SourceTableName;
       var employeesLoaderErrorReportTableName = Constants.EmployeesLoaderErrorReport.SourceTableName;
+      var contactsLoaderErrorReportTableName = Constants.ContactsLoaderErrorReport.SourceTableName;
       var departmentsLoaderErrorReportTableName = Constants.DepartmentsLoaderErrorReport.SourceTableName;
       var loginsLoaderErrorReportTableName = Constants.LoginsLoaderErrorReport.SourceTableName;
       var fileRetentionPeriodErrorReportTableName = Constants.FileRetentionPeriodLoaderErrorReport.SourceTableName;
@@ -57,6 +59,7 @@ namespace GD.UploadData.Server
                                                                     departmentsLoaderErrorReportTableName,
                                                                     loginsLoaderErrorReportTableName,
                                                                     employeesLoaderErrorReportTableName,
+                                                                    contactsLoaderErrorReportTableName,
                                                                     caseFileErrorReportTableName,
                                                                     fileRetentionPeriodErrorReportTableName,
                                                                     citiesLoaderErrorReportTableName,
@@ -69,6 +72,7 @@ namespace GD.UploadData.Server
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.JobTitlesLoaderErrorReport.CreateSourceTable, new[] {jobTitlesLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.BusinessUnitsLoaderErrorReport.CreateSourceTable, new[] {businessUnitsLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.EmployeesLoaderErrorReport.CreateSourceTable, new[] {employeesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ContactsLoaderErrorReport.CreateSourceTable, new[] {contactsLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DepartmentsLoaderErrorReport.CreateSourceTable, new[] {departmentsLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.LoginsLoaderErrorReport.CreateSourceTable, new[] {loginsLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CaseFileLoaderErrorReport.CreateSourceTable, new[] {caseFileErrorReportTableName});

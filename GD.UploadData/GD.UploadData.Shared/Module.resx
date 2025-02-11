@@ -197,4 +197,7 @@ Of them with an error: {1}</value>
   <data name="LoadMunicipalAreas" xml:space="preserve">
     <value>Load municipal areas</value>
   </data>
+  <data name="LoadContacts" xml:space="preserve">
+    <value>Load contacts</value>
+  </data>
 </root>
