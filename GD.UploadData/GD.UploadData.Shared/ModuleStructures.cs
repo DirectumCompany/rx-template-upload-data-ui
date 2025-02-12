@@ -317,6 +317,19 @@ namespace GD.UploadData.Structures.Module
     public string Error { get; set; }
   }
   
+  partial class Role 
+  {
+    public string Name { get; set; }
+    
+    public string Note { get; set; }
+    
+    public string IsSingleUser { get; set;}
+    
+    public List<string> Recipients { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
   #endregion
   
   /// <summary>

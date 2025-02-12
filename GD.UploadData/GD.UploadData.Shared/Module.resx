@@ -200,4 +200,7 @@ Of them with an error: {1}</value>
   <data name="LoadContacts" xml:space="preserve">
     <value>Load contacts</value>
   </data>
+  <data name="LoadRoles" xml:space="preserve">
+    <value>Load roles</value>
+  </data>
 </root>

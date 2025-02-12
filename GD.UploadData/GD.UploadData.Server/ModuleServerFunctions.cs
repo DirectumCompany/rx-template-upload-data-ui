@@ -929,6 +929,57 @@ namespace GD.UploadData.Server
     
     #endregion
     
+    #region Роли
+    
+    [Remote]
+    public List<Structures.Module.Role> CreateOrUpdateRoles(List<Structures.Module.Role> roles)
+    {
+      foreach (var contact in roles.Where(x => string.IsNullOrEmpty(x.Error)))
+      {
+        try
+        {
+          var record = GetContact(contact);
+          if (record == null)
+            record = Contacts.Create();
+          record.Name = contact.Name;
+          if (!string.IsNullOrEmpty(contact.Company))
+          {
+            record.Company = GetCompanyRecord(contact.Company);
+            if (record.Company == null)
+              throw AppliedCodeException.Create(Resources.NotFoundCompanyExceptionTextFormat(contact.Company));
+          }
+          if (!string.IsNullOrEmpty(contact.JobTitle))
+          {
+            record.JobTitle = GetJobTitleRecord(contact.JobTitle, string.Empty).Name;
+            if (record.JobTitle == null)
+              throw AppliedCodeException.Create(Resources.NotFoundJobTitleExceptionTextFormat(contact.JobTitle, string.Empty));
+          }
+          record.Phone = contact.Phone;
+          record.Fax = contact.Fax;
+          record.Email = contact.Email;
+          record.Homepage = contact.Homepage;
+          record.Note = contact.Note;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          contact.Error = ex.Message;
+        }
+      }
+      return contacts;
+    }
+    
+    public IContact GetContact(Structures.Module.Contact contact)
+    {
+      if (string.IsNullOrEmpty(contact.FullName) || string.IsNullOrEmpty(contact.Company))
+        return null;
+      
+      return Contacts.GetAll(c => c.Name == contact.Name && c.Company.Name == contact.Company &&
+                             c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
     #region Сроки хранения
     
     // <summary>

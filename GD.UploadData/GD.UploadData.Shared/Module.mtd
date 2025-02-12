@@ -444,7 +444,8 @@
     "LoadMunArea",
     "LoadSettlements",
     "LoadMunicipalAreas",
-    "LoadContacts"
+    "LoadContacts",
+    "LoadRoles"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

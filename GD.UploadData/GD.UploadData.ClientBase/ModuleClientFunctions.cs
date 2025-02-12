@@ -703,6 +703,72 @@ namespace GD.UploadData.Client
     
     #endregion
     
+    #region Роли
+    
+    public void LoadRoles()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadRoles);
+      if (file == null)
+        return;
+      var contacts = GetRolesFromExcel(file);
+      contacts = Functions.Module.Remote.CreateOrUpdateRoles(contacts);
+      var contactsWithError = contacts.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (contactsWithError.Any())
+        ShowContactsLoaderReport(contactsWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count());
+    }
+    
+    public List<Structures.Module.Role> GetRolesFromExcel(byte[] file)
+    {
+      var roles = new List<Structures.Module.Role>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 3)).IsEmpty())
+        {
+          var role = Structures.Module.Role.Create();
+          try
+          {
+            role.Name = range.Cell(1,1).Value.ToString();
+            role.Note = range.Cell(1,2).Value.ToString();
+            foreach (var recipient in range.Cell(1,3).Value.ToString().Split('|'))
+            {
+              role.Recipients.Add(recipient);
+            }
+            role.IsSingleUser = range.Cell(1,4).Value.ToString();
+          }
+          catch (Exception ex)
+          {
+            role.Error = ex.Message;
+          }
+          
+          roles.Add(role);
+          currentRow++;
+        }
+      }
+      return role;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Учетных записей".
+    /// </summary>
+    /// <param name="jobTitles">Список должностей.</param>
+    private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
+    {
+      var report = Reports.GetContactsLoaderErrorReport();
+      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}",
+                                                                        x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone, 
+                                                                        x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    } 
+    
+    #endregion
+    
     #endregion
     
     #region Загрузка классификатора обращений

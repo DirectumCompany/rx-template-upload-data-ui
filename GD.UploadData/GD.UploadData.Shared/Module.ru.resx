@@ -200,4 +200,7 @@
   <data name="LoadContacts" xml:space="preserve">
     <value>Загрузить контакты</value>
   </data>
+  <data name="LoadRoles" xml:space="preserve">
+    <value>Загрузить роли</value>
+  </data>
 </root>
