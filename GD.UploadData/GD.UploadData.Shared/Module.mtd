@@ -290,6 +290,14 @@
     {
       "ItemId": "d44f8b28-b57d-4366-ab94-46b861d67c05",
       "PreviousItemId": "4a88fab9-390b-4485-af4d-38b6cced8142"
+    },
+    {
+      "ItemId": "d126799c-572f-4a44-be41-a48f9b77ab94",
+      "PreviousItemId": "d44f8b28-b57d-4366-ab94-46b861d67c05"
+    },
+    {
+      "ItemId": "2397937d-049f-4d1d-a164-a84ad404d3f3",
+      "PreviousItemId": "d126799c-572f-4a44-be41-a48f9b77ab94"
     }
   ],
   "HandledEvents": [
@@ -445,7 +453,11 @@
     "LoadSettlements",
     "LoadMunicipalAreas",
     "LoadContacts",
-    "LoadRoles"
+    "LoadRoles",
+    "Yes",
+    "LoadAssociatedApplications",
+    "LoadDocumentRegister",
+    "LoadRegistrationGroup"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

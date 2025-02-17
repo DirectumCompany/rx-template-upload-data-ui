@@ -934,48 +934,429 @@ namespace GD.UploadData.Server
     [Remote]
     public List<Structures.Module.Role> CreateOrUpdateRoles(List<Structures.Module.Role> roles)
     {
-      foreach (var contact in roles.Where(x => string.IsNullOrEmpty(x.Error)))
+      foreach (var role in roles.Where(x => string.IsNullOrEmpty(x.Error)))
       {
         try
         {
-          var record = GetContact(contact);
+          var record = GetRole(role);
           if (record == null)
-            record = Contacts.Create();
-          record.Name = contact.Name;
-          if (!string.IsNullOrEmpty(contact.Company))
+            record = Roles.Create();
+          record.Name = role.Name;
+          record.Description = role.Note;
+          foreach (var recipient in role.Recipients)
           {
-            record.Company = GetCompanyRecord(contact.Company);
-            if (record.Company == null)
-              throw AppliedCodeException.Create(Resources.NotFoundCompanyExceptionTextFormat(contact.Company));
+            var entity = GetRecipient(recipient);
+            if (!entity.IncludedIn(record))
+              record.RecipientLinks.AddNew().Member = entity;
           }
-          if (!string.IsNullOrEmpty(contact.JobTitle))
-          {
-            record.JobTitle = GetJobTitleRecord(contact.JobTitle, string.Empty).Name;
-            if (record.JobTitle == null)
-              throw AppliedCodeException.Create(Resources.NotFoundJobTitleExceptionTextFormat(contact.JobTitle, string.Empty));
-          }
-          record.Phone = contact.Phone;
-          record.Fax = contact.Fax;
-          record.Email = contact.Email;
-          record.Homepage = contact.Homepage;
-          record.Note = contact.Note;
+          record.IsSingleUser = role.IsSingleUser == Resources.Yes ? true : false;
           record.Save();
         }
         catch (Exception ex)
         {
-          contact.Error = ex.Message;
+          role.Error = ex.Message;
         }
       }
-      return contacts;
+      return roles;
     }
     
-    public IContact GetContact(Structures.Module.Contact contact)
+    public IRecipient GetRecipient(string recipient)
     {
-      if (string.IsNullOrEmpty(contact.FullName) || string.IsNullOrEmpty(contact.Company))
+      if (string.IsNullOrEmpty(recipient))
         return null;
       
-      return Contacts.GetAll(c => c.Name == contact.Name && c.Company.Name == contact.Company &&
-                             c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    public IRole GetRole(Structures.Module.Role role)
+    {
+      if (string.IsNullOrEmpty(role.Name))
+        return null;
+      
+      return Roles.GetAll(r => r.Name == role.Name && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Приложения обработчики
+    
+    [Remote]
+    public List<Structures.Module.AssociatedApplication> CreateOrUpdateAssociatedApplications(List<Structures.Module.AssociatedApplication> applications)
+    {
+      foreach (var application in applications.Where(a => string.IsNullOrEmpty(a.Error)))
+      {
+        try
+        {
+          var record = GetApplication(application);
+          if (record == null)
+            record = Sungero.Content.AssociatedApplications.Create();
+          record.Name = application.Name;
+          record.Extension = application.Extension;
+          record.MonitoringType = GetMonitoringType(application.MonitoringType);
+          record.OpenByDefaultForReading = application.OpenByDefaultForReading == "Да";
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          application.Error = ex.Message;
+        }
+      }
+      return applications;
+    }
+    
+    public Sungero.Content.IAssociatedApplication GetApplication(Structures.Module.AssociatedApplication application)
+    {
+      if (string.IsNullOrEmpty(application.Name) || string.IsNullOrEmpty(application.Extension))
+        return null;
+
+      return Sungero.Content.AssociatedApplications.GetAll(a => a.Status == Sungero.CoreEntities.DatabookEntry.Status.Active &&
+                                                           a.Name != application.Name &&
+                                                           a.MonitoringType == GetMonitoringType(application.MonitoringType)).FirstOrDefault();
+    }
+    
+    public Sungero.Core.Enumeration? GetMonitoringType(string monitoringType)
+    {
+      var byProcessAndWindow = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow);
+      var manual = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Manual);
+      var process = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Process);
+      
+      if (monitoringType == byProcessAndWindow)
+        return Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow;
+      if (monitoringType == manual)
+        return Sungero.Content.AssociatedApplication.MonitoringType.Manual;
+      if (monitoringType == process)
+        return Sungero.Content.AssociatedApplication.MonitoringType.Process;
+      
+      return null;
+    }
+    
+    #endregion
+    
+    #region Группа регистрации
+    
+    [Remote]
+    public List<Structures.Module.RegistrationGroup> CreateOrUpdateRegistrationGroup(List<Structures.Module.RegistrationGroup> registrationGroups)
+    {
+      foreach (var registrationGroup in registrationGroups.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetRegistrationGroup(registrationGroup.Name, registrationGroup.ResponsibleEmployee, registrationGroup.Index);
+          if (record == null)
+            record = RegistrationGroups.Create();
+          record.Name = registrationGroup.Name;
+          record.Index = registrationGroup.Index;
+          record.ResponsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
+          if (registrationGroup.CanRegister == "Входящий")
+            record.CanRegisterIncoming = true;
+          if (registrationGroup.CanRegister == "Исходящий")
+            record.CanRegisterOutgoing = true;
+          if (registrationGroup.CanRegister == "Внутренний")
+            record.CanRegisterInternal = true;
+          if (registrationGroup.CanRegister == "Договоры")
+            record.CanRegisterContractual = true;
+          
+          foreach (var recipient in GetRecipients(registrationGroup))
+          {
+            var employee = record.RecipientLinks.AddNew();
+            employee.Member = recipient;
+          }
+          
+          foreach (var department in GetDepartments(registrationGroup))
+          {
+            var recordDepartment = record.Departments.AddNew();
+            recordDepartment.Department = department;
+          }
+          
+          record.Description = registrationGroup.Description;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          registrationGroup.Error = ex.Message;
+        }
+      }
+      return registrationGroups;
+    }
+    
+    public IRegistrationGroup GetRegistrationGroup(string name, string responsibleEmployee, string index)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return RegistrationGroups.GetAll(x => x.Name == name && x.ResponsibleEmployee.Equals(GetEmployeeRecord(responsibleEmployee)) &&
+                                       x.Index == index && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    public IRegistrationGroup GetRegistrationGroup(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return RegistrationGroups.GetAll(x => x.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    public List<IRecipient> GetRecipients(Structures.Module.RegistrationGroup registrationGroup)
+    {
+      var recipients = new List<IRecipient>();
+      var recipientNames = registrationGroup.RecipientLinks.Split(';');
+      foreach (var recipient in recipientNames)
+        recipients.Add(GetRecipient(recipient));
+      
+      return recipients;
+    }
+    
+    public List<IDepartment> GetDepartments(Structures.Module.RegistrationGroup registrationGroup)
+    {
+      var departments = new List<IDepartment>();
+      var departmentNames = registrationGroup.Departments.Split(';');
+      foreach (var department in departmentNames)
+        departments.Add(GetDepartmentRecord(department));
+      
+      return departments;
+    }
+    
+    #endregion
+    
+    #region  Журналы регистраций
+    
+    [Remote]
+    public List<Structures.Module.DocumentRegister> CreateorUpdateDocumentRegister(List<Structures.Module.DocumentRegister> documentRegisters)
+    {
+      foreach (var documentRegister in documentRegisters.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetDocumentRegisterRecord(documentRegister);
+          if (record == null)
+            record = DocumentRegisters.Create();
+          record.Name = documentRegister.Name;
+          record.RegisterType = GetRegisterType(documentRegister.RegisterType);
+          record.Index = documentRegister.Index;
+          record.DocumentFlow = GetDocumentFlow(documentRegister.DocumentFlow);
+          record.NumberOfDigitsInNumber = Convert.ToInt32(documentRegister.NumberOfDigitsInItem);
+          record.NumberingSection = GetNumberingSection(documentRegister.NumberedSection);
+          record.NumberingPeriod = GetNumberingPeriod(documentRegister.NumberingPeriod);
+          record.RegistrationGroup = GetRegistrationGroup(documentRegister.Name);
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          documentRegister.Error = ex.Message;
+        }
+      }
+      return documentRegisters;
+    }
+    
+    public Enumeration? GetNumberingSection(string section)
+    {
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit))
+        return Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.Department))
+        return Sungero.Docflow.DocumentRegister.NumberingSection.Department;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument))
+        return Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.NoSection))
+        return Sungero.Docflow.DocumentRegister.NumberingSection.NoSection;
+      
+      return null;
+    }
+    
+    public Enumeration? GetNumberingPeriod(string period)
+    {
+      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous))
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous;
+      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day))
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Day;
+      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month))
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Month;
+      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter))
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter;
+      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year))
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Year;
+      
+      return null;
+    }
+    
+    public Enumeration? GetDocumentFlow(string name)
+    {
+      var inner = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
+      var contracts = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
+      var incoming = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
+      var outgoing = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
+      
+      if (name == inner)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Inner;
+      if (name == contracts)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts;
+      if (name == incoming)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming;
+      if (name == outgoing)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing;
+      
+      return null;
+    }
+    
+    public Enumeration? GetRegisterType(string type)
+    {
+      var registration = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Registration);
+      var numbering = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering);
+      
+      if (type == numbering)
+        return Sungero.Docflow.DocumentRegister.RegisterType.Numbering;
+      
+      if (type == registration)
+        return Sungero.Docflow.DocumentRegister.RegisterType.Registration;
+      
+      return null;
+    }
+    
+    public IDocumentRegister GetDocumentRegisterRecord(Structures.Module.DocumentRegister documentRegister)
+    {
+      if (string.IsNullOrEmpty(documentRegister.Name))
+        return null;
+      
+      return DocumentRegisters.GetAll(d => d.Name == documentRegister.Name &&
+                                      d.Index == documentRegister.Index &&
+                                      d.RegistrationGroup == GetRegistrationGroup(documentRegister.RegistrationGroup) &&
+                                      d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Виды документов
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="documentKinds"></param>
+    /// <returns></returns>
+    [Remote]
+    public List<Structures.Module.DocumentKind> CreateOrUpdateDocumentKinds(List<Structures.Module.DocumentKind> documentKinds)
+    {
+      foreach (var documentKind in documentKinds.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetDocumentKindRecord(documentKind.Name);
+          if (record == null)
+            record = DocumentKinds.Create();
+          record.Name = documentKind.Name;
+          record.ShortName = documentKind.ShortName;
+          record.Code = documentKind.Code;
+          record.DocumentFlow = GetDocumentFlow(documentKind.DocumentFlow);
+          record.DocumentType = GetDocumentType(documentKind.DocumentType);
+          record.DeadlineInDays = Convert.ToInt32(documentKind.DeadlineDays);
+          record.DeadlineInHours = Convert.ToInt32(documentKind.DeadlineHours);
+          record.Note = documentKind.Note;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          documentKind.Error = ex.Message;
+        }
+      }
+      return documentKinds;
+    }
+    
+    public IDocumentType GetDocumentType(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return DocumentTypes.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    public IDocumentKind GetDocumentKindRecord(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return DocumentKinds.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Страны
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="documentKinds"></param>
+    /// <returns></returns>
+    [Remote]
+    public List<Structures.Module.Country> CreateOrUpdateCountries(List<Structures.Module.Country> countries)
+    {
+      foreach (var country in countries.Where(c => string.IsNullOrEmpty(c.Error)))
+      {
+        try
+        {
+          var record = GetCountryRecord(country.Name);
+          if (record == null)
+            record = Countries.Create();
+          record.Name = country.Name;
+          record.Code = country.Code;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          country.Error = ex.Message;
+        }
+      }
+      return countries;
+    }
+    
+    public ICountry GetCountryRecord(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return Countries.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Валюты
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="documentKinds"></param>
+    /// <returns></returns>
+    [Remote]
+    public List<Structures.Module.Currency> CreateOrUpdateCurrencies(List<Structures.Module.Currency> currencies)
+    {
+      foreach (var currency in currencies.Where(c => string.IsNullOrEmpty(c.Error)))
+      {
+        try
+        {
+          var record = GetCurrency(currency.Name);
+          if (record == null)
+            record = Currencies.Create();
+          record.Name = currency.Name;
+          record.ShortName = currency.ShortName;
+          record.FractionName = currency.FractionName;
+          record.AlphaCode = currency.AlphaCode;
+          record.NumericCode = currency.NumericCode;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          currency.Error = ex.Message;
+        }
+      }
+      return currencies;
+    }
+    
+    public ICurrency GetCurrency(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return Currencies.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion

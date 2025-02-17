@@ -203,4 +203,16 @@
   <data name="LoadRoles" xml:space="preserve">
     <value>Загрузить роли</value>
   </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="LoadAssociatedApplications" xml:space="preserve">
+    <value>Загрузить приложения-обработчики</value>
+  </data>
+  <data name="LoadDocumentRegister" xml:space="preserve">
+    <value>Загрузить журнал регистрации</value>
+  </data>
+  <data name="LoadRegistrationGroup" xml:space="preserve">
+    <value>Загрузить группы регистрации</value>
+  </data>
 </root>

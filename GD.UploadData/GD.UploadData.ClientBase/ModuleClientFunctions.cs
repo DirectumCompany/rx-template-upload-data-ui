@@ -694,9 +694,9 @@ namespace GD.UploadData.Client
     private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
     {
       var report = Reports.GetContactsLoaderErrorReport();
-      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}",
-                                                                        x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone, 
-                                                                        x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
+      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+                                                                         x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone,
+                                                                         x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -710,17 +710,18 @@ namespace GD.UploadData.Client
       var file = GetExcelFromFileSelectDialog(Resources.LoadRoles);
       if (file == null)
         return;
-      var contacts = GetRolesFromExcel(file);
-      contacts = Functions.Module.Remote.CreateOrUpdateRoles(contacts);
-      var contactsWithError = contacts.Where(c => !string.IsNullOrEmpty(c.Error));
-      if (contactsWithError.Any())
-        ShowContactsLoaderReport(contactsWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count());
+      var roles = GetRolesFromExcel(file);
+      roles = Functions.Module.Remote.CreateOrUpdateRoles(roles);
+      var rolesWithError = roles.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (rolesWithError.Any())
+        ShowRolesLoaderReport(rolesWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
     }
     
     public List<Structures.Module.Role> GetRolesFromExcel(byte[] file)
     {
       var roles = new List<Structures.Module.Role>();
+      
       using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
@@ -731,11 +732,12 @@ namespace GD.UploadData.Client
         while(!(range = worksheet.Range(currentRow, 1, currentRow, 3)).IsEmpty())
         {
           var role = Structures.Module.Role.Create();
+          role.Recipients = new List<string>();
           try
           {
-            role.Name = range.Cell(1,1).Value.ToString();
-            role.Note = range.Cell(1,2).Value.ToString();
-            foreach (var recipient in range.Cell(1,3).Value.ToString().Split('|'))
+            role.Name = range.Cell(1,1).Value.ToString().Trim();
+            role.Note = range.Cell(1,2).Value.ToString().Trim();
+            foreach (var recipient in range.Cell(1,3).Value.ToString().Split(';'))
             {
               role.Recipients.Add(recipient);
             }
@@ -750,24 +752,348 @@ namespace GD.UploadData.Client
           currentRow++;
         }
       }
-      return role;
+      return roles;
     }
     
     /// <summary>
     /// Показать отчет "Ошибки  при загрузке Учетных записей".
     /// </summary>
     /// <param name="jobTitles">Список должностей.</param>
-    private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
+    private void ShowRolesLoaderReport(List<Structures.Module.Role> role)
     {
+      //TODO Zaytsev: Нужно будет вот тут доделать. Посмотреть ка вообще оно сейчас работает в других структурках.
       var report = Reports.GetContactsLoaderErrorReport();
-      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}",
-                                                                        x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone, 
-                                                                        x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
+      var recipients = string.Empty;
+      foreach (var listRecipients in role.Select(r => r.Recipients))
+      {
+        foreach (var recipient in listRecipients)
+        {
+          recipients = string.Join(";", recipient);
+        }
+      }
+      var errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipients, x.Error).ToArray()));
       report.LoaderErrorsStructure = errorText;
       report.Open();
-    } 
+    }
     
     #endregion
+    
+    #region Приложения-обработчики
+    
+    public void LoadAssociatedApplications()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadAssociatedApplications);
+      if (file == null)
+        return;
+      var applications = GetAssociatedApplicationsFromFile(file);
+      applications = Functions.Module.Remote.CreateOrUpdateAssociatedApplications(applications);
+      var applicationsWithError = applications.Where(a => !string.IsNullOrEmpty(a.Error));
+      if (applicationsWithError.Any())
+        ShowAssociatedApplicationsLoaderReport(applicationsWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(applications.Count, applicationsWithError.Count());
+    }
+    
+    public List<Structures.Module.AssociatedApplication> GetAssociatedApplicationsFromFile(byte[] file)
+    {
+      var applications = new List<Structures.Module.AssociatedApplication>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var application = Structures.Module.AssociatedApplication.Create();
+          try
+          {
+            application.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            application.Extension = range.Cell(1,2).Value.ToString()?.Trim();
+            application.MonitoringType = range.Cell(1,3).Value.ToString()?.Trim();
+            application.OpenByDefaultForReading = range.Cell(1,4).Value.ToString();
+          }
+          catch (Exception ex)
+          {
+            application.Error = ex.Message;
+          }
+          
+          applications.Add(application);
+          currentRow++;
+        }
+      }
+      
+      return applications;
+    }
+
+    public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> application)
+    {
+      var report = Reports.GetAssociatedApplicationLoaderErrorReport();
+      var errorText = string.Join(";", application.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
+                                                                             a.Name, a.Extension, a.MonitoringType,
+                                                                             a.OpenByDefaultForReading, a.Error)));
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #endregion
+    
+    #region Группы регистрации
+    
+    public void LoadRegistrationGroup()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadRegistrationGroup);
+      if (file == null)
+        return;
+      var registrationGroups = GetRegistrationGroupFromExcel(file);
+      registrationGroups = Functions.Module.Remote.CreateOrUpdateRegistrationGroup(registrationGroups);
+      var registrationGroupWithError = registrationGroups.Where(c => !string.IsNullOrEmpty(c.Error));
+      // if (rolesWithError.Any())
+      // ShowRolesLoaderReport(rolesWithError.ToList());
+      // Resources.EndOfLoadNotifyMessageTextFormat(registrationGroup.Count, registrationGroupWithError.Count());
+    }
+    
+    public List<Structures.Module.RegistrationGroup> GetRegistrationGroupFromExcel(byte[] file)
+    {
+      var registrationGroups = new List<Structures.Module.RegistrationGroup>();
+      using (var memory = new System.IO.MemoryStream())
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var registrationGroup = Structures.Module.RegistrationGroup.Create();
+          
+          try
+          {
+            registrationGroup.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            registrationGroup.Index = range.Cell(1,2).Value.ToString()?.Trim();
+            registrationGroup.ResponsibleEmployee = range.Cell(1,3).Value.ToString()?.Trim();
+            registrationGroup.CanRegister = range.Cell(1,5).Value.ToString()?.Trim();
+            registrationGroup.RecipientLinks = range.Cell(1,4).Value.ToString()?.Trim();
+            registrationGroup.Departments = range.Cell(1,6).Value.ToString()?.Trim();
+            registrationGroup.Description = range.Cell(1,7).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            registrationGroup.Error = ex.Message;
+          }
+          currentRow++;
+          registrationGroups.Add(registrationGroup);
+        }
+      }
+      return registrationGroups;
+    }
+    
+    #endregion
+    
+    #region Журналы регистраций
+    
+    public void LoadDocumentRegister()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      if (file == null)
+        return;
+      var documentRegisters = GetDocumentRegisterFromExcel(file);
+      documentRegisters = Functions.Module.Remote.CreateorUpdateDocumentRegister(documentRegisters);
+      var documentRegistersWithError = documentRegisters.Where(c => !string.IsNullOrEmpty(c.Error));
+      // if (rolesWithError.Any())
+      // ShowRolesLoaderReport(rolesWithError.ToList());
+      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+    }
+    
+    public List<Structures.Module.DocumentRegister> GetDocumentRegisterFromExcel(byte[] file)
+    {
+      var documentRegisters = new List<Structures.Module.DocumentRegister>();
+      using (var memory = new System.IO.MemoryStream())
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var documentRegister = Structures.Module.DocumentRegister.Create();
+          
+          try
+          {
+            documentRegister.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            documentRegister.RegisterType = range.Cell(1,2).Value.ToString()?.Trim();
+            documentRegister.Index = range.Cell(1,3).Value.ToString()?.Trim();
+            documentRegister.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
+            documentRegister.NumberOfDigitsInItem = range.Cell(1,5).Value.ToString()?.Trim();
+            documentRegister.NumberedSection = range.Cell(1,6).Value.ToString()?.Trim();
+            documentRegister.NumberingPeriod = range.Cell(1,7).Value.ToString()?.Trim();
+            documentRegister.RegistrationGroup = range.Cell(1,8).Value.ToString()?.Trim();
+            documentRegister.Error = range.Cell(1,9).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            documentRegister.Error = ex.Message;
+          }
+          currentRow++;
+          documentRegisters.Add(documentRegister);
+        }
+      }
+      return documentRegisters;
+    }
+    
+    #endregion
+    
+    #region Виды документов
+    
+    public void LoadDocumentKind()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      if (file == null)
+        return;
+      var documentKinds = GetDocumentKindFromExcel(file);
+      documentKinds = Functions.Module.Remote.CreateOrUpdateDocumentKinds(documentKinds);
+      var documentKindsWithError = documentKinds.Where(c => !string.IsNullOrEmpty(c.Error));
+      // if (rolesWithError.Any())
+      // ShowRolesLoaderReport(rolesWithError.ToList());
+      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+    }
+    
+    public List<Structures.Module.DocumentKind> GetDocumentKindFromExcel(byte[] file)
+    {
+      var documentKinds = new List<Structures.Module.DocumentKind>();
+      using (var memory = new System.IO.MemoryStream())
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var documentKind = Structures.Module.DocumentKind.Create();
+          
+          try
+          {
+            documentKind.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            documentKind.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
+            documentKind.Code = range.Cell(1,3).Value.ToString()?.Trim();
+            documentKind.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
+            documentKind.NumerationType = range.Cell(1,5).Value.ToString()?.Trim();
+            documentKind.DocumentType = range.Cell(1,6).Value.ToString()?.Trim();
+            documentKind.DeadlineDays = range.Cell(1,7).Value.ToString()?.Trim();
+            documentKind.DeadlineHours = range.Cell(1,8).Value.ToString()?.Trim();
+            documentKind.Note = range.Cell(1,9).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            documentKind.Error = ex.Message;
+          }
+          currentRow++;
+          documentKinds.Add(documentKind);
+        }
+      }
+      return documentKinds;
+    }
+    
+    #endregion
+    
+    #region Страны
+    
+    public void LoadCountrys()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      if (file == null)
+        return;
+      var countries = GetСountriesFromExcel(file);
+      countries = Functions.Module.Remote.CreateOrUpdateCountries(countries);
+      var countriesWithError = countries.Where(c => !string.IsNullOrEmpty(c.Error));
+      // if (rolesWithError.Any())
+      // ShowRolesLoaderReport(rolesWithError.ToList());
+      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+    }
+    
+    public List<Structures.Module.Country> GetСountriesFromExcel(byte[] file)
+    {
+      var countries = new List<Structures.Module.Country>();
+      using (var memory = new System.IO.MemoryStream())
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var country = Structures.Module.Country.Create();
+          
+          try
+          {
+            country.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            country.Code = range.Cell(1,2).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            country.Error = ex.Message;
+          }
+          currentRow++;
+          countries.Add(country);
+        }
+      }
+      return countries;
+    }
+    
+    #endregion
+    
+    #region Валюты
+    
+    public void LoadCurrency()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      if (file == null)
+        return;
+      var currencies = GetCurrenciesFromExcel(file);
+      currencies = Functions.Module.Remote.CreateOrUpdateCurrencies(currencies);
+      var currenciesWithError = currencies.Where(c => !string.IsNullOrEmpty(c.Error));
+      // if (rolesWithError.Any())
+      // ShowRolesLoaderReport(rolesWithError.ToList());
+      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+    }
+    
+    public List<Structures.Module.Currency> GetCurrenciesFromExcel(byte[] file)
+    {
+      var currencies = new List<Structures.Module.Currency>();
+      using (var memory = new System.IO.MemoryStream())
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var currency = Structures.Module.Currency.Create();
+          
+          try
+          {
+            currency.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            currency.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
+            currency.FractionName = range.Cell(1,3).Value.ToString()?.Trim();
+            currency.AlphaCode = range.Cell(1,4).Value.ToString()?.Trim();
+            currency.NumericCode = range.Cell(1,5).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            currency.Error = ex.Message;
+          }
+          currentRow++;
+          currencies.Add(currency);
+        }
+      }
+      return currencies;
+    }
     
     #endregion
     
@@ -1111,6 +1437,7 @@ namespace GD.UploadData.Client
     }
 
     #endregion
+    
     #endregion
     
     #region ФИАС

@@ -203,4 +203,16 @@ Of them with an error: {1}</value>
   <data name="LoadRoles" xml:space="preserve">
     <value>Load roles</value>
   </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="LoadAssociatedApplications" xml:space="preserve">
+    <value>Load associated applications</value>
+  </data>
+  <data name="LoadDocumentRegister" xml:space="preserve">
+    <value>Load document register</value>
+  </data>
+  <data name="LoadRegistrationGroup" xml:space="preserve">
+    <value>Load registration group</value>
+  </data>
 </root>
