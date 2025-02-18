@@ -880,6 +880,11 @@ namespace GD.UploadData.Server
     
     #region Контакты
     
+    /// <summary>
+    /// Создать или обновить записи справочника Контактное лицо.
+    /// </summary>
+    /// <param name="contacts">Список контактных лиц.</param>
+    /// <returns>Список контактных лиц.</returns>
     [Remote]
     public List<Structures.Module.Contact> CreateOrUpdateContacts(List<Structures.Module.Contact> contacts)
     {
@@ -918,19 +923,29 @@ namespace GD.UploadData.Server
       return contacts;
     }
     
+    
+    /// <summary>
+    /// Получить контактное лицо.
+    /// </summary>
+    /// <param name="contact"></param>
+    /// <returns></returns>
     public IContact GetContact(Structures.Module.Contact contact)
     {
       if (string.IsNullOrEmpty(contact.FullName) || string.IsNullOrEmpty(contact.Company))
         return null;
       
-      return Contacts.GetAll(c => c.Name == contact.Name && c.Company.Name == contact.Company &&
-                             c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return Contacts.GetAll(c => c.Name == contact.Name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion
     
     #region Роли
     
+    /// <summary>
+    /// Создать или обновить записи справочника Роль.
+    /// </summary>
+    /// <param name="roles">Список ролей.</param>
+    /// <returns>Список ролей.</returns>
     [Remote]
     public List<Structures.Module.Role> CreateOrUpdateRoles(List<Structures.Module.Role> roles)
     {
@@ -960,6 +975,11 @@ namespace GD.UploadData.Server
       return roles;
     }
     
+    /// <summary>
+    /// Получить субъект прав доступа.
+    /// </summary>
+    /// <param name="recipient">Название субъекта прав.</param>
+    /// <returns>Запись справочника субъекта прав.</returns>
     public IRecipient GetRecipient(string recipient)
     {
       if (string.IsNullOrEmpty(recipient))
@@ -968,6 +988,11 @@ namespace GD.UploadData.Server
       return Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
+    /// <summary>
+    /// Получить запись справочника Роль.
+    /// </summary>
+    /// <param name="role">Название роли.</param>
+    /// <returns>Запись справочника Роль.</returns>
     public IRole GetRole(Structures.Module.Role role)
     {
       if (string.IsNullOrEmpty(role.Name))
@@ -980,6 +1005,11 @@ namespace GD.UploadData.Server
     
     #region Приложения обработчики
     
+    /// <summary>
+    /// Создать или обновить записи справочника Приложение-обработчик.
+    /// </summary>
+    /// <param name="applications">Список обработчиков приложений.</param>
+    /// <returns>Список обработчиков приложений.</returns>
     [Remote]
     public List<Structures.Module.AssociatedApplication> CreateOrUpdateAssociatedApplications(List<Structures.Module.AssociatedApplication> applications)
     {
@@ -1004,16 +1034,25 @@ namespace GD.UploadData.Server
       return applications;
     }
     
+    /// <summary>
+    /// Получить запись справочника Приложение-обработчик.
+    /// </summary>
+    /// <param name="application">Название записи справочника.</param>
+    /// <returns>Запись справочника Приложение-обработчик.</returns>
     public Sungero.Content.IAssociatedApplication GetApplication(Structures.Module.AssociatedApplication application)
     {
-      if (string.IsNullOrEmpty(application.Name) || string.IsNullOrEmpty(application.Extension))
+      if (string.IsNullOrEmpty(application.Name))
         return null;
 
       return Sungero.Content.AssociatedApplications.GetAll(a => a.Status == Sungero.CoreEntities.DatabookEntry.Status.Active &&
-                                                           a.Name != application.Name &&
-                                                           a.MonitoringType == GetMonitoringType(application.MonitoringType)).FirstOrDefault();
+                                                           a.Name == application.Name).FirstOrDefault();
     }
     
+    /// <summary>
+    /// Получить локализованное значение типа отслеживания закрытия.
+    /// </summary>
+    /// <param name="monitoringType">Название типа отслеживания закрытия</param>
+    /// <returns>Локализованное значение типа отслеживания закрытия.</returns>
     public Sungero.Core.Enumeration? GetMonitoringType(string monitoringType)
     {
       var byProcessAndWindow = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
@@ -1037,6 +1076,11 @@ namespace GD.UploadData.Server
     
     #region Группа регистрации
     
+    /// <summary>
+    /// Создать или обновить записи справочника Группа регистрации.
+    /// </summary>
+    /// <param name="registrationGroups">Список групп регистрации.</param>
+    /// <returns>Список групп регистрации.</returns>
     [Remote]
     public List<Structures.Module.RegistrationGroup> CreateOrUpdateRegistrationGroup(List<Structures.Module.RegistrationGroup> registrationGroups)
     {
@@ -1050,22 +1094,15 @@ namespace GD.UploadData.Server
           record.Name = registrationGroup.Name;
           record.Index = registrationGroup.Index;
           record.ResponsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
-          if (registrationGroup.CanRegister == "Входящий")
-            record.CanRegisterIncoming = true;
-          if (registrationGroup.CanRegister == "Исходящий")
-            record.CanRegisterOutgoing = true;
-          if (registrationGroup.CanRegister == "Внутренний")
-            record.CanRegisterInternal = true;
-          if (registrationGroup.CanRegister == "Договоры")
-            record.CanRegisterContractual = true;
+          SetDocumentFlow(record, registrationGroup.DocumentFlow);
           
-          foreach (var recipient in GetRecipients(registrationGroup))
+          foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
           {
             var employee = record.RecipientLinks.AddNew();
             employee.Member = recipient;
           }
           
-          foreach (var department in GetDepartments(registrationGroup))
+          foreach (var department in GetDepartments(registrationGroup.Departments))
           {
             var recordDepartment = record.Departments.AddNew();
             recordDepartment.Department = department;
@@ -1082,6 +1119,36 @@ namespace GD.UploadData.Server
       return registrationGroups;
     }
     
+    /// <summary>
+    /// Установить значение регистрируемых докуметопотоков.
+    /// </summary>
+    /// <param name="record">Группа регистрации.</param>
+    /// <param name="registrationGroups">Документопотоки.</param>
+    public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
+    {
+      var inner = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
+      var contracts = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
+      var incoming = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
+      var outgoing = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
+      var flows = documentFlows.ToLower().Split(';');
+      
+      if (flows.Contains(inner))
+        record.CanRegisterInternal = true;
+      if (flows.Contains(contracts))
+        record.CanRegisterContractual = true;
+      if (flows.Contains(incoming))
+        record.CanRegisterIncoming = true;
+      if (flows.Contains(outgoing))
+        record.CanRegisterOutgoing = true;
+    }
+    
+    /// <summary>
+    /// Получить запсь справочника Группа регистрации.
+    /// </summary>
+    /// <param name="name">Название группы регистрации.</param>
+    /// <param name="responsibleEmployee">Ответственны за группу регистрации.</param>
+    /// <param name="index">Индекс группы регистрации.</param>
+    /// <returns>Запись справочника группы регистрации.</returns>
     public IRegistrationGroup GetRegistrationGroup(string name, string responsibleEmployee, string index)
     {
       if (string.IsNullOrEmpty(name))
@@ -1091,6 +1158,11 @@ namespace GD.UploadData.Server
                                        x.Index == index && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
+    /// <summary>
+    /// Получить запсь справочника Группа регистрации.
+    /// </summary>
+    /// <param name="name">Название группы регистрации.</param>
+    /// <returns>Запись справочника группы регистрации.</returns>
     public IRegistrationGroup GetRegistrationGroup(string name)
     {
       if (string.IsNullOrEmpty(name))
@@ -1099,21 +1171,29 @@ namespace GD.UploadData.Server
       return RegistrationGroups.GetAll(x => x.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
-    public List<IRecipient> GetRecipients(Structures.Module.RegistrationGroup registrationGroup)
+    /// <summary>
+    /// Получить список участников группы регистрации.
+    /// </summary>
+    /// <param name="resipients">Название группы.</param>
+    /// <returns>Список участников группы регистрации.</returns>
+    public List<IRecipient> GetRecipients(string recipientNames)
     {
       var recipients = new List<IRecipient>();
-      var recipientNames = registrationGroup.RecipientLinks.Split(';');
-      foreach (var recipient in recipientNames)
+      foreach (var recipient in recipientNames.Split(';'))
         recipients.Add(GetRecipient(recipient));
       
       return recipients;
     }
     
-    public List<IDepartment> GetDepartments(Structures.Module.RegistrationGroup registrationGroup)
+    /// <summary>
+    /// Получить список Подразделений.
+    /// </summary>
+    /// <param name="departments">Название подразделения.</param>
+    /// <returns>Список подразделений.</returns>
+    public List<IDepartment> GetDepartments(string departmentNames)
     {
       var departments = new List<IDepartment>();
-      var departmentNames = registrationGroup.Departments.Split(';');
-      foreach (var department in departmentNames)
+      foreach (var department in departmentNames.Split(';'))
         departments.Add(GetDepartmentRecord(department));
       
       return departments;
@@ -1123,6 +1203,11 @@ namespace GD.UploadData.Server
     
     #region  Журналы регистраций
     
+    /// <summary>
+    /// Создать или обновить записи справочника Журнал регистрации.
+    /// </summary>
+    /// <param name="documentRegisters">Список журналов регистрации.</param>
+    /// <returns>Список журналов регистрации.</returns>
     [Remote]
     public List<Structures.Module.DocumentRegister> CreateorUpdateDocumentRegister(List<Structures.Module.DocumentRegister> documentRegisters)
     {
@@ -1151,6 +1236,11 @@ namespace GD.UploadData.Server
       return documentRegisters;
     }
     
+    /// <summary>
+    /// Получить Разрез нумерации.
+    /// </summary>
+    /// <param name="section">Название разреза нумерации.</param>
+    /// <returns>Локализованное значение разреза нумераци.</returns>
     public Enumeration? GetNumberingSection(string section)
     {
       if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit))
@@ -1165,6 +1255,11 @@ namespace GD.UploadData.Server
       return null;
     }
     
+    /// <summary>
+    /// Получить Период нумерации.
+    /// </summary>
+    /// <param name="period">Название периода нумераци.</param>
+    /// <returns>Локализованное значение периода нумераци.</returns>
     public Enumeration? GetNumberingPeriod(string period)
     {
       if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous))
@@ -1181,6 +1276,11 @@ namespace GD.UploadData.Server
       return null;
     }
     
+    /// <summary>
+    /// Получить локализованное значение документопотока.
+    /// </summary>
+    /// <param name="name">Название документопотока.</param>
+    /// <returns>Локализованное значение документопотока.</returns>
     public Enumeration? GetDocumentFlow(string name)
     {
       var inner = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
@@ -1200,6 +1300,11 @@ namespace GD.UploadData.Server
       return null;
     }
     
+    /// <summary>
+    /// Получить локализованное значение типа журнала.
+    /// </summary>
+    /// <param name="type">Название журнала.</param>
+    /// <returns>Локализованное значение типа журнала.</returns>
     public Enumeration? GetRegisterType(string type)
     {
       var registration = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Registration);
@@ -1230,10 +1335,10 @@ namespace GD.UploadData.Server
     #region Виды документов
     
     /// <summary>
-    /// 
+    /// Создать или обновить записи справочника Вид документа.
     /// </summary>
-    /// <param name="documentKinds"></param>
-    /// <returns></returns>
+    /// <param name="documentKinds">Список видов документов.</param>
+    /// <returns>Список видов документов.</returns>
     [Remote]
     public List<Structures.Module.DocumentKind> CreateOrUpdateDocumentKinds(List<Structures.Module.DocumentKind> documentKinds)
     {
@@ -1262,6 +1367,11 @@ namespace GD.UploadData.Server
       return documentKinds;
     }
     
+    /// <summary>
+    /// Получить запись справочника Тип документа.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Тип документа.</returns>
     public IDocumentType GetDocumentType(string name)
     {
       if (string.IsNullOrEmpty(name))
@@ -1270,6 +1380,11 @@ namespace GD.UploadData.Server
       return DocumentTypes.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
+    /// <summary>
+    /// Получить запись справочника Вид документа.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Вид документа.</returns>
     public IDocumentKind GetDocumentKindRecord(string name)
     {
       if (string.IsNullOrEmpty(name))
@@ -1283,10 +1398,10 @@ namespace GD.UploadData.Server
     #region Страны
     
     /// <summary>
-    /// 
+    /// Создать или обновить записи справочника Страна.
     /// </summary>
-    /// <param name="documentKinds"></param>
-    /// <returns></returns>
+    /// <param name="documentKinds">Список стран.</param>
+    /// <returns>Список стран.</returns>
     [Remote]
     public List<Structures.Module.Country> CreateOrUpdateCountries(List<Structures.Module.Country> countries)
     {
@@ -1309,6 +1424,11 @@ namespace GD.UploadData.Server
       return countries;
     }
     
+    /// <summary>
+    /// Получить запись справочника Страна.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочникаСтрана.</returns>
     public ICountry GetCountryRecord(string name)
     {
       if (string.IsNullOrEmpty(name))
@@ -1322,10 +1442,10 @@ namespace GD.UploadData.Server
     #region Валюты
     
     /// <summary>
-    /// 
+    /// Создать или обновить валюты.
     /// </summary>
-    /// <param name="documentKinds"></param>
-    /// <returns></returns>
+    /// <param name="currencies">Список валют.</param>
+    /// <returns>Список валют.</returns>
     [Remote]
     public List<Structures.Module.Currency> CreateOrUpdateCurrencies(List<Structures.Module.Currency> currencies)
     {
@@ -1351,6 +1471,11 @@ namespace GD.UploadData.Server
       return currencies;
     }
     
+    /// <summary>
+    /// Получить валюту.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Валюта.</returns>
     public ICurrency GetCurrency(string name)
     {
       if (string.IsNullOrEmpty(name))

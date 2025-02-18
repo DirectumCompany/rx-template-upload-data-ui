@@ -634,6 +634,9 @@ namespace GD.UploadData.Client
     
     #region Контактные лица
     
+    /// <summary>
+    /// Загрузить контактные лица.
+    /// </summary>
     public void LoadContacts()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadContacts);
@@ -647,6 +650,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count());
     }
     
+    /// <summary>
+    /// Получить записи справочника контактные лица из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список контактных лиц.</returns>
     public List<Structures.Module.Contact> GetContactsFromExcel(byte[] file)
     {
       var contacts = new List<Structures.Module.Contact>();
@@ -688,9 +696,9 @@ namespace GD.UploadData.Client
     }
     
     /// <summary>
-    /// Показать отчет "Ошибки  при загрузке Учетных записей".
+    /// Показать отчет "Ошибки  при загрузке Контактных лиц".
     /// </summary>
-    /// <param name="jobTitles">Список должностей.</param>
+    /// <param name="contact">Список контактных лиц.</param>
     private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
     {
       var report = Reports.GetContactsLoaderErrorReport();
@@ -705,6 +713,9 @@ namespace GD.UploadData.Client
     
     #region Роли
     
+    /// <summary>
+    /// Загрузить роли.
+    /// </summary>
     public void LoadRoles()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadRoles);
@@ -718,6 +729,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
     }
     
+    /// <summary>
+    /// Получить записи справочника Роли из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список ролей.</returns>
     public List<Structures.Module.Role> GetRolesFromExcel(byte[] file)
     {
       var roles = new List<Structures.Module.Role>();
@@ -756,19 +772,19 @@ namespace GD.UploadData.Client
     }
     
     /// <summary>
-    /// Показать отчет "Ошибки  при загрузке Учетных записей".
+    /// Показать отчет "Ошибки  при загрузке Ролей".
     /// </summary>
-    /// <param name="jobTitles">Список должностей.</param>
-    private void ShowRolesLoaderReport(List<Structures.Module.Role> role)
+    /// <param name="roles">Список должностей.</param>
+    private void ShowRolesLoaderReport(List<Structures.Module.Role> roles)
     {
       var report = Reports.GetContactsLoaderErrorReport();
       var errorText = string.Empty;
       var recipients = string.Empty;
-      foreach (var listRecipients in role.Select(r => r.Recipients))
+      foreach (var listRecipients in roles.Select(r => r.Recipients))
       {
         foreach (var recipient in listRecipients)
         {
-          errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipient, x.Error).ToArray()));
+          errorText = string.Join(";", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipient, x.Error).ToArray()));
         }
       }
       // errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipients, x.Error).ToArray()));
@@ -780,6 +796,9 @@ namespace GD.UploadData.Client
     
     #region Приложения-обработчики
     
+    /// <summary>
+    /// Загрузить приложения обработчики.
+    /// </summary>
     public void LoadAssociatedApplications()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadAssociatedApplications);
@@ -793,6 +812,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(applications.Count, applicationsWithError.Count());
     }
     
+    /// <summary>
+    /// Получить записи справочника обработчики приложений из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список обработчиков приложений.</returns>
     public List<Structures.Module.AssociatedApplication> GetAssociatedApplicationsFromFile(byte[] file)
     {
       var applications = new List<Structures.Module.AssociatedApplication>();
@@ -826,12 +850,16 @@ namespace GD.UploadData.Client
       return applications;
     }
 
-    public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> application)
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Обработчиков приложений".
+    /// </summary>
+    /// <param name="applications">Список обработчиков приложений.</param>
+    public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> applications)
     {
       var report = Reports.GetAssociatedApplicationLoaderErrorReport();
-      var errorText = string.Join(";", application.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
-                                                                             a.Name, a.Extension, a.MonitoringType,
-                                                                             a.OpenByDefaultForReading, a.Error)));
+      var errorText = string.Join(";", applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
+                                                                              a.Name, a.Extension, a.MonitoringType,
+                                                                              a.OpenByDefaultForReading, a.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -842,6 +870,9 @@ namespace GD.UploadData.Client
     
     #region Группы регистрации
     
+    /// <summary>
+    /// Загрузить группы регистрации.
+    /// </summary>
     public void LoadRegistrationGroup()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadRegistrationGroup);
@@ -855,6 +886,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(registrationGroups.Count, registrationGroupWithError.Count());
     }
     
+    /// <summary>
+    /// Получить записи справочника группы регистрации из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список групп регистрации.</returns>
     public List<Structures.Module.RegistrationGroup> GetRegistrationGroupFromExcel(byte[] file)
     {
       var registrationGroups = new List<Structures.Module.RegistrationGroup>();
@@ -874,7 +910,7 @@ namespace GD.UploadData.Client
             registrationGroup.Name = range.Cell(1,1).Value.ToString()?.Trim();
             registrationGroup.Index = range.Cell(1,2).Value.ToString()?.Trim();
             registrationGroup.ResponsibleEmployee = range.Cell(1,3).Value.ToString()?.Trim();
-            registrationGroup.CanRegister = range.Cell(1,4).Value.ToString()?.Trim();
+            registrationGroup.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
             registrationGroup.RecipientLinks = range.Cell(1,5).Value.ToString()?.Trim();
             registrationGroup.Departments = range.Cell(1,6).Value.ToString()?.Trim();
             registrationGroup.Description = range.Cell(1,7).Value.ToString()?.Trim();
@@ -890,12 +926,16 @@ namespace GD.UploadData.Client
       return registrationGroups;
     }
     
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Групп регистрации".
+    /// </summary>
+    /// <param name="registrationsGroups">Список групп регистрации.</param>
     public void ShowRegistrationGroupsLoaderReport(List<Structures.Module.RegistrationGroup> registrationsGroups)
     {
       var report = Reports.GetRegistrationGroupLoaderErrorReport();
       var errorText = string.Join(";", registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
                                                                                      a.Name, a.Index, a.ResponsibleEmployee,
-                                                                                     a.CanRegister, a.RecipientLinks,
+                                                                                     a.DocumentFlow, a.RecipientLinks,
                                                                                      a.Departments, a.Description, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
@@ -905,6 +945,9 @@ namespace GD.UploadData.Client
     
     #region Журналы регистраций
     
+    /// <summary>
+    /// Загрузить журнал регистрации.
+    /// </summary>
     public void LoadDocumentRegister()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
@@ -918,6 +961,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count());
     }
     
+     /// <summary>
+    /// Получить записи справочника Журнал регистрации из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список журналова регистрации.</returns>
     public List<Structures.Module.DocumentRegister> GetDocumentRegisterFromExcel(byte[] file)
     {
       var documentRegisters = new List<Structures.Module.DocumentRegister>();
@@ -955,6 +1003,10 @@ namespace GD.UploadData.Client
       return documentRegisters;
     }
     
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке журналова регистрации".
+    /// </summary>
+    /// <param name="documentRegisters">Список журналов регистрации.</param>
     public void ShowDocumentRegisterLoaderReport(List<Structures.Module.DocumentRegister> documentRegisters)
     {
       var report = Reports.GetDocumentRegisterLoaderErrorReport();
@@ -971,6 +1023,9 @@ namespace GD.UploadData.Client
     
     #region Виды документов
     
+    /// <summary>
+    /// Загрузить виды документов.
+    /// </summary>
     public void LoadDocumentKind()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
@@ -984,6 +1039,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count());
     }
     
+     /// <summary>
+    /// Получить записи справочника виды документов из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список видов документов.</returns>
     public List<Structures.Module.DocumentKind> GetDocumentKindFromExcel(byte[] file)
     {
       var documentKinds = new List<Structures.Module.DocumentKind>();
@@ -1021,14 +1081,18 @@ namespace GD.UploadData.Client
       return documentKinds;
     }
     
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Видов документов".
+    /// </summary>
+    /// <param name="documentKinds">Список видов документов.</param>
     public void ShowDocumentKindsLoaderReport(List<Structures.Module.DocumentKind> documentKinds)
     {
       var report = Reports.GetDocumentKindsLoaderErrorReport();
       var errorText = string.Join(";", documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
-                                                                                   a.Name, a.ShortName, a.Code,
-                                                                                   a.NumerationType, a.DocumentFlow,
-                                                                                   a.DocumentType, a.DeadlineDays,
-                                                                                   a.DeadlineHours, a.Note, a.Error)).ToArray());
+                                                                               a.Name, a.ShortName, a.Code,
+                                                                               a.NumerationType, a.DocumentFlow,
+                                                                               a.DocumentType, a.DeadlineDays,
+                                                                               a.DeadlineHours, a.Note, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -1037,6 +1101,9 @@ namespace GD.UploadData.Client
     
     #region Страны
     
+    /// <summary>
+    /// Загрузить страны.
+    /// </summary>
     public void LoadCountries()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
@@ -1050,6 +1117,11 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count());
     }
     
+     /// <summary>
+    /// Получить записи справочника страны из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список стран.</returns>
     public List<Structures.Module.Country> GetСountriesFromExcel(byte[] file)
     {
       var countries = new List<Structures.Module.Country>();
@@ -1080,6 +1152,10 @@ namespace GD.UploadData.Client
       return countries;
     }
     
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Стран".
+    /// </summary>
+    /// <param name="jobTitles">Список стран.</param>
     public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
     {
       var report = Reports.GetCurrenciesLoaderErrorReport();
@@ -1092,6 +1168,9 @@ namespace GD.UploadData.Client
     
     #region Валюты
     
+    /// <summary>
+    /// Загрузить валюты.
+    /// </summary>
     public void LoadCurrency()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
@@ -1105,10 +1184,15 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count());
     }
     
+     /// <summary>
+    /// Получить записи справочника валюты из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список валют.</returns>
     public List<Structures.Module.Currency> GetCurrenciesFromExcel(byte[] file)
     {
       var currencies = new List<Structures.Module.Currency>();
-      using (var memory = new System.IO.MemoryStream())
+      using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
         var worksheet = workbook.Worksheet(1);
@@ -1138,6 +1222,10 @@ namespace GD.UploadData.Client
       return currencies;
     }
     
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Валют".
+    /// </summary>
+    /// <param name="jobTitles">Список валют.</param>
     public void ShowCurrenciesLoaderReport(List<Structures.Module.Currency> currencies)
     {
       var report = Reports.GetCurrenciesLoaderErrorReport();

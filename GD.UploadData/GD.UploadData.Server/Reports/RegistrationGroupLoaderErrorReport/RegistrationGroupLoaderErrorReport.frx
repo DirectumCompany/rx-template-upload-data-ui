@@ -35,7 +35,7 @@ namespace FastReport
         <Column Name="Index" DataType="System.String" PropName="Column"/>
         <Column Name="Status" DataType="System.String" PropName="Column"/>
         <Column Name="ResponsibleEmployee" DataType="System.String" PropName="Person"/>
-        <Column Name="CanRegister" DataType="System.String" PropName="Error"/>
+        <Column Name="DocumentFlow" DataType="System.String" PropName="Error"/>
         <Column Name="RecipientLinks" DataType="System.String" PropName="Department"/>
         <Column Name="Departments" DataType="System.String" PropName="JobTitle"/>
         <Column Name="Description" DataType="System.String" PropName="PersonnelNumber"/>
@@ -59,9 +59,9 @@ namespace FastReport
       <TextObject Name="Text38" Left="1360.8" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Ошибки" Font="Segoe UI, 9pt"/>
       <TextObject Name="Text42" Left="340.2" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Статус" Font="Segoe UI, 9pt"/>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="22.1" Width="718.2" Height="25.05" DataSource="Table">
+    <DataBand Name="Data1" Top="22.9" Width="718.2" Height="25.05" DataSource="Table">
       <TextObject Name="Text5" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Name]" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text6" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.CanRegister]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text6" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.DocumentFlow]" Font="Segoe UI, 9pt"/>
       <TextObject Name="Text7" Left="850.5" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.RecipientLinks]" Font="Segoe UI, 9pt"/>
       <TextObject Name="Text32" Left="170.1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Index]" Font="Segoe UI, 9pt"/>
       <TextObject Name="Text34" Left="510.3" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.ResponsibleEmployee]" Font="Segoe UI, 9pt"/>

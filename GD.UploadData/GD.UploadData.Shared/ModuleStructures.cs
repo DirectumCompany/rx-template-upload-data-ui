@@ -365,7 +365,7 @@ namespace GD.UploadData.Structures.Module
     
     public string ResponsibleEmployee { get; set; }
     
-    public string CanRegister { get; set; }
+    public string DocumentFlow { get; set; }
     
     public string RecipientLinks { get; set; }
     
@@ -429,7 +429,7 @@ namespace GD.UploadData.Structures.Module
   /// <summary>
   /// Страна.
   /// </summary>
-  partial class Country 
+  partial class Country
   {
     public string Name { get; set; }
     

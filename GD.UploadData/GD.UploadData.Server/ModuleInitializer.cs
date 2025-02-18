@@ -86,34 +86,49 @@ namespace GD.UploadData.Server
                                                                     countriesLoaderErrorReportTableName,
                                                                     documentKindsLoaderErrorReportTableName});
 
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ClassifierLoaderErrorReport.CreateSourceTable, new[] {classifierLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CompaniesLoaderErrorReport.CreateSourceTable, new[] {companiesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.PersonsLoaderErrorReport.CreateSourceTable, new[] {personsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.JobTitlesLoaderErrorReport.CreateSourceTable, new[] {jobTitlesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.BusinessUnitsLoaderErrorReport.CreateSourceTable, new[] {businessUnitsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.EmployeesLoaderErrorReport.CreateSourceTable, new[] {employeesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ContactsLoaderErrorReport.CreateSourceTable, new[] {contactsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DepartmentsLoaderErrorReport.CreateSourceTable, new[] {departmentsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.LoginsLoaderErrorReport.CreateSourceTable, new[] {loginsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CaseFileLoaderErrorReport.CreateSourceTable, new[] {caseFileErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.FileRetentionPeriodLoaderErrorReport.CreateSourceTable, new[] {fileRetentionPeriodErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CitiesLoaderErrorReport.CreateSourceTable, new[] {citiesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.MunicipalAreasLoaderErrorReport.CreateSourceTable, new[] {municipalAreasLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ClassifierLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {classifierLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CompaniesLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {companiesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.PersonsLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {personsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.JobTitlesLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {jobTitlesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.BusinessUnitsLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {businessUnitsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.EmployeesLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {employeesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ContactsLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {contactsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DepartmentsLoaderErrorReport.CreateSourceTable, 
+                                                                     new[] {departmentsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.LoginsLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {loginsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CaseFileLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {caseFileErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.FileRetentionPeriodLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {fileRetentionPeriodErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CitiesLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {citiesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.MunicipalAreasLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {municipalAreasLoaderErrorReportTableName});
       
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.SettlementsLoaderErrorReport.CreateSourceTable, new[] {settlementsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.RolesLoaderErrorReport.CreateSourceTable, new[] {rolesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.SettlementsLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {settlementsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.RolesLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {rolesLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.AssociatedApplicationLoaderErrorReport.CreateSourceTable,
                                                                      new[] {associatedApplicationsLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.RegistrationGroupLoaderErrorReport.CreateSourceTable, new[]
-                                                                     {registrationLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DocumentRegisterLoaderErrorReport.CreateSourceTable, new[]
-                                                                     {documentRegisterLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CurrenciesLoaderErrorReport.CreateSourceTable, new[]
-                                                                     {currenciesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CountriesLoaderErrorReport.CreateSourceTable, new[]
-                                                                     {countriesLoaderErrorReportTableName});
-      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DocumentKindsLoaderErrorReport.CreateSourceTable, new[]
-                                                                     {documentKindsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.RegistrationGroupLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {registrationLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DocumentRegisterLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {documentRegisterLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CurrenciesLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {currenciesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CountriesLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {countriesLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DocumentKindsLoaderErrorReport.CreateSourceTable,
+                                                                     new[] {documentKindsLoaderErrorReportTableName});
     }
   }
 }

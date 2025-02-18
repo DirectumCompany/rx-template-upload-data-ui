@@ -19,7 +19,7 @@ namespace GD.UploadData.Structures.RegistrationGroupLoaderErrorReport
     
     public string ResponsibleEmployee { get; set; }
     
-    public string CanRegister { get; set; }
+    public string DocumentFlow { get; set; }
     
     public string RecipientLinks { get; set; }
     
