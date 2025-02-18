@@ -25,8 +25,12 @@ namespace GD.UploadData.Server
       Reports.AccessRights.Grant(Reports.GetCitiesLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       Reports.AccessRights.Grant(Reports.GetMunicipalAreasLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       Reports.AccessRights.Grant(Reports.GetSettlementsLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
-      Reports.AccessRights.Grant(Reports.GetContactsLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       
+      Reports.AccessRights.Grant(Reports.GetContactsLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
+      Reports.AccessRights.Grant(Reports.GetRolesLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
+      Reports.AccessRights.Grant(Reports.GetAssociatedApplicationLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
+      Reports.AccessRights.Grant(Reports.GetRegistrationGroupLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
+      Reports.AccessRights.Grant(Reports.GetDocumentRegisterLoaderErrorReport().Info, Roles.AllUsers, DefaultReportAccessRightsTypes.Execute);
       CreateReportsTables();
     }
     
@@ -49,6 +53,8 @@ namespace GD.UploadData.Server
       var citiesLoaderErrorReportTableName = Constants.CitiesLoaderErrorReport.SourceTableName;
       var municipalAreasLoaderErrorReportTableName = Constants.MunicipalAreasLoaderErrorReport.SourceTableName;
       var settlementsLoaderErrorReportTableName = Constants.SettlementsLoaderErrorReport.SourceTableName;
+      var registrationLoaderErrorReportTableName = Constants.RegistrationGroupLoaderErrorReport.SourceTableName;
+      var documentRegisterLoaderErrorReportTableName = Constants.DocumentRegisterLoaderErrorReport.SourceTableName;
       
       Sungero.Docflow.PublicFunctions.Module.DropReportTempTables(new[] {
                                                                     classifierLoaderErrorReportTableName,
@@ -64,7 +70,9 @@ namespace GD.UploadData.Server
                                                                     fileRetentionPeriodErrorReportTableName,
                                                                     citiesLoaderErrorReportTableName,
                                                                     municipalAreasLoaderErrorReportTableName,
-                                                                    settlementsLoaderErrorReportTableName});
+                                                                    settlementsLoaderErrorReportTableName,
+                                                                    registrationLoaderErrorReportTableName,
+                                                                    documentRegisterLoaderErrorReportTableName});
 
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.ClassifierLoaderErrorReport.CreateSourceTable, new[] {classifierLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CompaniesLoaderErrorReport.CreateSourceTable, new[] {companiesLoaderErrorReportTableName});
@@ -79,7 +87,12 @@ namespace GD.UploadData.Server
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.FileRetentionPeriodLoaderErrorReport.CreateSourceTable, new[] {fileRetentionPeriodErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.CitiesLoaderErrorReport.CreateSourceTable, new[] {citiesLoaderErrorReportTableName});
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.MunicipalAreasLoaderErrorReport.CreateSourceTable, new[] {municipalAreasLoaderErrorReportTableName});
+      
       Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.SettlementsLoaderErrorReport.CreateSourceTable, new[] {settlementsLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.RegistrationGroupLoaderErrorReport.CreateSourceTable, new[]
+                                                                     {registrationLoaderErrorReportTableName});
+      Sungero.Docflow.PublicFunctions.Module.ExecuteSQLCommandFormat(Queries.DocumentRegisterLoaderErrorReport.CreateSourceTable, new[]
+                                                                     {documentRegisterLoaderErrorReportTableName});
     }
   }
 }

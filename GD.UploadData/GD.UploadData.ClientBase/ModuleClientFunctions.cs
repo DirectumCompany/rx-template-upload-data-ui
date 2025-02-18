@@ -761,17 +761,17 @@ namespace GD.UploadData.Client
     /// <param name="jobTitles">Список должностей.</param>
     private void ShowRolesLoaderReport(List<Structures.Module.Role> role)
     {
-      //TODO Zaytsev: Нужно будет вот тут доделать. Посмотреть ка вообще оно сейчас работает в других структурках.
       var report = Reports.GetContactsLoaderErrorReport();
+      var errorText = string.Empty;
       var recipients = string.Empty;
       foreach (var listRecipients in role.Select(r => r.Recipients))
       {
         foreach (var recipient in listRecipients)
         {
-          recipients = string.Join(";", recipient);
+          errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipient, x.Error).ToArray()));
         }
       }
-      var errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipients, x.Error).ToArray()));
+      // errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipients, x.Error).ToArray()));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -850,15 +850,15 @@ namespace GD.UploadData.Client
       var registrationGroups = GetRegistrationGroupFromExcel(file);
       registrationGroups = Functions.Module.Remote.CreateOrUpdateRegistrationGroup(registrationGroups);
       var registrationGroupWithError = registrationGroups.Where(c => !string.IsNullOrEmpty(c.Error));
-      // if (rolesWithError.Any())
-      // ShowRolesLoaderReport(rolesWithError.ToList());
-      // Resources.EndOfLoadNotifyMessageTextFormat(registrationGroup.Count, registrationGroupWithError.Count());
+      if (registrationGroupWithError.Any())
+        ShowRegistrationGroupsLoaderReport(registrationGroupWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(registrationGroups.Count, registrationGroupWithError.Count());
     }
     
     public List<Structures.Module.RegistrationGroup> GetRegistrationGroupFromExcel(byte[] file)
     {
       var registrationGroups = new List<Structures.Module.RegistrationGroup>();
-      using (var memory = new System.IO.MemoryStream())
+      using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
         var worksheet = workbook.Worksheet(1);
@@ -874,8 +874,8 @@ namespace GD.UploadData.Client
             registrationGroup.Name = range.Cell(1,1).Value.ToString()?.Trim();
             registrationGroup.Index = range.Cell(1,2).Value.ToString()?.Trim();
             registrationGroup.ResponsibleEmployee = range.Cell(1,3).Value.ToString()?.Trim();
-            registrationGroup.CanRegister = range.Cell(1,5).Value.ToString()?.Trim();
-            registrationGroup.RecipientLinks = range.Cell(1,4).Value.ToString()?.Trim();
+            registrationGroup.CanRegister = range.Cell(1,4).Value.ToString()?.Trim();
+            registrationGroup.RecipientLinks = range.Cell(1,5).Value.ToString()?.Trim();
             registrationGroup.Departments = range.Cell(1,6).Value.ToString()?.Trim();
             registrationGroup.Description = range.Cell(1,7).Value.ToString()?.Trim();
           }
@@ -890,6 +890,17 @@ namespace GD.UploadData.Client
       return registrationGroups;
     }
     
+    public void ShowRegistrationGroupsLoaderReport(List<Structures.Module.RegistrationGroup> registrationsGroups)
+    {
+      var report = Reports.GetRegistrationGroupLoaderErrorReport();
+      var errorText = string.Join(";", registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                                                                                     a.Name, a.Index, a.ResponsibleEmployee,
+                                                                                     a.CanRegister, a.RecipientLinks,
+                                                                                     a.Departments, a.Description, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
     #endregion
     
     #region Журналы регистраций
@@ -902,9 +913,9 @@ namespace GD.UploadData.Client
       var documentRegisters = GetDocumentRegisterFromExcel(file);
       documentRegisters = Functions.Module.Remote.CreateorUpdateDocumentRegister(documentRegisters);
       var documentRegistersWithError = documentRegisters.Where(c => !string.IsNullOrEmpty(c.Error));
-      // if (rolesWithError.Any())
-      // ShowRolesLoaderReport(rolesWithError.ToList());
-      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+      if (documentRegistersWithError.Any())
+        ShowDocumentRegisterLoaderReport(documentRegistersWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count());
     }
     
     public List<Structures.Module.DocumentRegister> GetDocumentRegisterFromExcel(byte[] file)
@@ -942,6 +953,18 @@ namespace GD.UploadData.Client
         }
       }
       return documentRegisters;
+    }
+    
+    public void ShowDocumentRegisterLoaderReport(List<Structures.Module.DocumentRegister> documentRegisters)
+    {
+      var report = Reports.GetDocumentRegisterLoaderErrorReport();
+      var errorText = string.Join(";", documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+                                                                                   a.Name, a.RegisterType, a.Index,
+                                                                                   a.DocumentFlow, a.NumberOfDigitsInItem,
+                                                                                   a.NumberedSection, a.NumberingPeriod,
+                                                                                   a.RegistrationGroup, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
     }
     
     #endregion
@@ -1002,7 +1025,7 @@ namespace GD.UploadData.Client
     
     #region Страны
     
-    public void LoadCountrys()
+    public void LoadCountries()
     {
       var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
       if (file == null)

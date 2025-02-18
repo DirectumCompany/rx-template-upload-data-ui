@@ -291,7 +291,7 @@ namespace GD.UploadData.Structures.Module
   }
   
   /// <summary>
-  /// 
+  /// Контактное лицо.
   /// </summary>
   partial class Contact
   {
@@ -321,7 +321,7 @@ namespace GD.UploadData.Structures.Module
   }
   
   /// <summary>
-  /// 
+  /// Роль.
   /// </summary>
   partial class Role
   {
@@ -363,8 +363,6 @@ namespace GD.UploadData.Structures.Module
     
     public string Index { get; set; }
     
-    public string Status { get; set; }
-    
     public string ResponsibleEmployee { get; set; }
     
     public string CanRegister { get; set; }
@@ -387,17 +385,17 @@ namespace GD.UploadData.Structures.Module
     
     public string RegisterType { get; set; }
     
-    public string RegistrationGroup { get; set; }
-    
     public string Index { get; set; }
     
     public string DocumentFlow { get; set; }
     
     public string NumberOfDigitsInItem { get; set; }
     
+    public string NumberedSection { get; set; }
+    
     public string NumberingPeriod { get; set; }
     
-    public string NumberedSection { get; set; }
+    public string RegistrationGroup { get; set; }
     
     public string Error { get; set; }
   }
