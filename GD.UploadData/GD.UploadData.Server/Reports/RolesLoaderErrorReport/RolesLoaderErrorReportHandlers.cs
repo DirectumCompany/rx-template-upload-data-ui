@@ -21,7 +21,8 @@ namespace GD.UploadData
           role.Split('|')[0],
           role.Split('|')[1],
           role.Split('|')[2],
-          role.Split('|')[3]));
+          role.Split('|')[3],
+          role.Split('|')[4]));
       
       Sungero.Docflow.PublicFunctions.Module.WriteStructuresToTable(Constants.RolesLoaderErrorReport.SourceTableName, tableData);
     }

@@ -979,9 +979,9 @@ namespace GD.UploadData.Client
       var documentKinds = GetDocumentKindFromExcel(file);
       documentKinds = Functions.Module.Remote.CreateOrUpdateDocumentKinds(documentKinds);
       var documentKindsWithError = documentKinds.Where(c => !string.IsNullOrEmpty(c.Error));
-      // if (rolesWithError.Any())
-      // ShowRolesLoaderReport(rolesWithError.ToList());
-      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+      if (documentKindsWithError.Any())
+        ShowDocumentKindsLoaderReport(documentKindsWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count());
     }
     
     public List<Structures.Module.DocumentKind> GetDocumentKindFromExcel(byte[] file)
@@ -1021,6 +1021,18 @@ namespace GD.UploadData.Client
       return documentKinds;
     }
     
+    public void ShowDocumentKindsLoaderReport(List<Structures.Module.DocumentKind> documentKinds)
+    {
+      var report = Reports.GetDocumentKindsLoaderErrorReport();
+      var errorText = string.Join(";", documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+                                                                                   a.Name, a.ShortName, a.Code,
+                                                                                   a.NumerationType, a.DocumentFlow,
+                                                                                   a.DocumentType, a.DeadlineDays,
+                                                                                   a.DeadlineHours, a.Note, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
     #endregion
     
     #region Страны
@@ -1033,9 +1045,9 @@ namespace GD.UploadData.Client
       var countries = GetСountriesFromExcel(file);
       countries = Functions.Module.Remote.CreateOrUpdateCountries(countries);
       var countriesWithError = countries.Where(c => !string.IsNullOrEmpty(c.Error));
-      // if (rolesWithError.Any())
-      // ShowRolesLoaderReport(rolesWithError.ToList());
-      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+      if (countriesWithError.Any())
+        ShowCountriesLoaderReport(countriesWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count());
     }
     
     public List<Structures.Module.Country> GetСountriesFromExcel(byte[] file)
@@ -1068,6 +1080,14 @@ namespace GD.UploadData.Client
       return countries;
     }
     
+    public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
+    {
+      var report = Reports.GetCurrenciesLoaderErrorReport();
+      var errorText = string.Join(";", countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
     #endregion
     
     #region Валюты
@@ -1080,9 +1100,9 @@ namespace GD.UploadData.Client
       var currencies = GetCurrenciesFromExcel(file);
       currencies = Functions.Module.Remote.CreateOrUpdateCurrencies(currencies);
       var currenciesWithError = currencies.Where(c => !string.IsNullOrEmpty(c.Error));
-      // if (rolesWithError.Any())
-      // ShowRolesLoaderReport(rolesWithError.ToList());
-      // Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+      if (currenciesWithError.Any())
+        ShowCurrenciesLoaderReport(currenciesWithError.ToList());
+      Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count());
     }
     
     public List<Structures.Module.Currency> GetCurrenciesFromExcel(byte[] file)
@@ -1116,6 +1136,16 @@ namespace GD.UploadData.Client
         }
       }
       return currencies;
+    }
+    
+    public void ShowCurrenciesLoaderReport(List<Structures.Module.Currency> currencies)
+    {
+      var report = Reports.GetCurrenciesLoaderErrorReport();
+      var errorText = string.Join(";", currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+                                                                            a.Name, a.ShortName, a.FractionName,
+                                                                            a.AlphaCode, a.NumericCode, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
     }
     
     #endregion

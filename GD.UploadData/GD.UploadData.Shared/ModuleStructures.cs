@@ -337,7 +337,7 @@ namespace GD.UploadData.Structures.Module
   }
   
   /// <summary>
-  /// 
+  /// Приложение-обработчик.
   /// </summary>
   partial class AssociatedApplication
   {
@@ -427,7 +427,7 @@ namespace GD.UploadData.Structures.Module
   }
   
   /// <summary>
-  /// Страны.
+  /// Страна.
   /// </summary>
   partial class Country 
   {
@@ -438,6 +438,10 @@ namespace GD.UploadData.Structures.Module
     public string Error { get; set; }
   }
   
+  
+  /// <summary>
+  /// Валюта.
+  /// </summary>
   partial class Currency
   {
     public string Name { get; set; }

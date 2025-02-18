@@ -32,31 +32,34 @@ namespace FastReport
     <SungeroSqlDataConnection Name="Sungero_Connection" Restrictions="DontModify, DontEdit, DontDelete, HideAllProperties" ConnectionStringExpression="[SungeroConnectionString]">
       <TableDataSource Name="Table" Alias="LoaderErrors" DataType="System.Int32" Enabled="true" CanEdit="true" SelectCommand="${SelectFromTempTable}">
         <Column Name="Name" DataType="System.String" PropName="Column"/>
-        <Column Name="Note" DataType="System.String" PropName="Column"/>
-        <Column Name="IsSingleUser" DataType="System.String" PropName="Column"/>
-        <Column Name="Recipients" DataType="System.String" PropName="Column1"/>
-        <Column Name="Error" DataType="System.String" PropName="Column2"/>
+        <Column Name="ShortName" DataType="System.String" PropName="Column"/>
+        <Column Name="FractionName" DataType="System.String" PropName="Column"/>
+        <Column Name="AlphaCode" DataType="System.String" PropName="Column1"/>
+        <Column Name="NumericCode" DataType="System.String" PropName="Column2"/>
+        <Column Name="Error" DataType="System.String" PropName="Column"/>
         <CommandParameter Name="ReportSessionId" DataType="16" IsDbType="true" Expression="[ReportSessionId]"/>
       </TableDataSource>
     </SungeroSqlDataConnection>
     <SungeroParameter Name="SungeroConnectionString" Restrictions="DontModify, DontEdit, DontDelete, HideAllProperties, DontShow" Id="a080acf9-86bf-498c-82bd-b2decb09f76a" IsRequired="false" IsCollection="false" InternalDataType="System.String" IsSimpleDataType="false" EntityTypeId="00000000-0000-0000-0000-000000000000"/>
-    <SungeroParameter Name="ReportSessionId" Id="96ee18a0-1d24-4d08-af89-117c9c7ddc82" IsRequired="false" IsCollection="false" InternalDataType="System.String" IsSimpleDataType="false" EntityTypeId="00000000-0000-0000-0000-000000000000"/>
-    <SungeroParameter Name="LoaderErrorsStructure" Id="f4f577c0-8545-489c-8298-94da826629d0" IsRequired="false" IsCollection="false" InternalDataType="System.String" IsSimpleDataType="false" EntityTypeId="00000000-0000-0000-0000-000000000000"/>
+    <SungeroParameter Name="ReportSessionId" Id="158b8003-3d51-4f10-849f-fd0d5e3b5871" IsRequired="false" IsCollection="false" InternalDataType="System.String" IsSimpleDataType="false" EntityTypeId="00000000-0000-0000-0000-000000000000"/>
+    <SungeroParameter Name="LoaderErrorsStructure" Id="6afd9e4b-37b8-4547-a82d-732bd6eaea39" IsRequired="false" IsCollection="false" InternalDataType="System.String" IsSimpleDataType="false" EntityTypeId="00000000-0000-0000-0000-000000000000"/>
   </Dictionary>
   <ReportPage Name="Page1" FirstPageSource="1" OtherPagesSource="1" Watermark.Font="Arial, 60pt" ExtraDesignWidth="true" UnlimitedWidth="true">
     <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="18.9">
       <TextObject Name="Text1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Наименование" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text2" Left="340.2" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Роль с одним участником" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text3" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Ошибки" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text31" Left="170.1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Описание" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text33" Left="510.3" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Состав участников" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text2" Left="340.2" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Дробная часть" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text3" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Цифровой код" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text31" Left="170.1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Сокр. Наименование" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text33" Left="510.3" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Буквенный код" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text35" Left="850.5" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="224, 224, 224" Text="Ошибки" Font="Segoe UI, 9pt"/>
     </ReportTitleBand>
     <DataBand Name="Data1" Top="22.9" Width="718.2" Height="18.9" DataSource="Table">
       <TextObject Name="Text5" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Name]" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text6" Left="340.2" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.IsSingleUser]" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text7" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Error]" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text32" Left="170.1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Note]" Font="Segoe UI, 9pt"/>
-      <TextObject Name="Text34" Left="510.3" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Recipients]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text6" Left="340.2" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.FractionName]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text7" Left="680.4" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.NumericCode]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text32" Left="170.1" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.ShortName]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text34" Left="510.3" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.AlphaCode]" Font="Segoe UI, 9pt"/>
+      <TextObject Name="Text36" Left="850.5" Width="170.1" Height="18.9" Border.Lines="All" Fill.Color="White" Text="[LoaderErrors.Error]" Font="Segoe UI, 9pt"/>
     </DataBand>
   </ReportPage>
 </Report>
