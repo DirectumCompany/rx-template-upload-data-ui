@@ -11,7 +11,6 @@ namespace GD.UploadData
 
     public override void BeforeExecute(Sungero.Reporting.Server.BeforeExecuteEventArgs e)
     {
-      //TODO Отчет не открывается. Падает внутренняя ошибка сервера.
       var reportSessionId = System.Guid.NewGuid().ToString();
       ContactsLoaderErrorReport.ReportSessionId = reportSessionId;
       

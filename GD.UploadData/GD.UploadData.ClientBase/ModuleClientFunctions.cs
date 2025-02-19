@@ -745,7 +745,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 3)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 4)).IsEmpty())
         {
           var role = Structures.Module.Role.Create();
           role.Recipients = new List<string>();
@@ -777,17 +777,11 @@ namespace GD.UploadData.Client
     /// <param name="roles">Список должностей.</param>
     private void ShowRolesLoaderReport(List<Structures.Module.Role> roles)
     {
-      var report = Reports.GetContactsLoaderErrorReport();
+      var report = Reports.GetRolesLoaderErrorReport();
       var errorText = string.Empty;
       var recipients = string.Empty;
-      foreach (var listRecipients in roles.Select(r => r.Recipients))
-      {
-        foreach (var recipient in listRecipients)
-        {
-          errorText = string.Join(";", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipient, x.Error).ToArray()));
-        }
-      }
-      // errorText = string.Join(";", role.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, recipients, x.Error).ToArray()));
+      errorText = string.Join(";", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, 
+                                                                   string.Join(";", x.Recipients), x.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -961,7 +955,7 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count());
     }
     
-     /// <summary>
+    /// <summary>
     /// Получить записи справочника Журнал регистрации из Excel.
     /// </summary>
     /// <param name="file">Файл.</param>
@@ -969,7 +963,7 @@ namespace GD.UploadData.Client
     public List<Structures.Module.DocumentRegister> GetDocumentRegisterFromExcel(byte[] file)
     {
       var documentRegisters = new List<Structures.Module.DocumentRegister>();
-      using (var memory = new System.IO.MemoryStream())
+      using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
         var worksheet = workbook.Worksheet(1);
@@ -1039,7 +1033,7 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count());
     }
     
-     /// <summary>
+    /// <summary>
     /// Получить записи справочника виды документов из Excel.
     /// </summary>
     /// <param name="file">Файл.</param>
@@ -1047,7 +1041,7 @@ namespace GD.UploadData.Client
     public List<Structures.Module.DocumentKind> GetDocumentKindFromExcel(byte[] file)
     {
       var documentKinds = new List<Structures.Module.DocumentKind>();
-      using (var memory = new System.IO.MemoryStream())
+      using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
         var worksheet = workbook.Worksheet(1);
@@ -1063,8 +1057,8 @@ namespace GD.UploadData.Client
             documentKind.Name = range.Cell(1,1).Value.ToString()?.Trim();
             documentKind.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
             documentKind.Code = range.Cell(1,3).Value.ToString()?.Trim();
-            documentKind.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
-            documentKind.NumerationType = range.Cell(1,5).Value.ToString()?.Trim();
+            documentKind.NumerationType = range.Cell(1,3).Value.ToString()?.Trim();
+            documentKind.DocumentFlow = range.Cell(1,5).Value.ToString()?.Trim();
             documentKind.DocumentType = range.Cell(1,6).Value.ToString()?.Trim();
             documentKind.DeadlineDays = range.Cell(1,7).Value.ToString()?.Trim();
             documentKind.DeadlineHours = range.Cell(1,8).Value.ToString()?.Trim();
@@ -1117,7 +1111,7 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count());
     }
     
-     /// <summary>
+    /// <summary>
     /// Получить записи справочника страны из Excel.
     /// </summary>
     /// <param name="file">Файл.</param>
@@ -1125,14 +1119,14 @@ namespace GD.UploadData.Client
     public List<Structures.Module.Country> GetСountriesFromExcel(byte[] file)
     {
       var countries = new List<Structures.Module.Country>();
-      using (var memory = new System.IO.MemoryStream())
+      using (var memory = new System.IO.MemoryStream(file))
       {
         var workbook = new XLWorkbook(memory);
         var worksheet = workbook.Worksheet(1);
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 2)).IsEmpty())
         {
           var country = Structures.Module.Country.Create();
           
@@ -1158,7 +1152,7 @@ namespace GD.UploadData.Client
     /// <param name="jobTitles">Список стран.</param>
     public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
     {
-      var report = Reports.GetCurrenciesLoaderErrorReport();
+      var report = Reports.GetCountriesLoaderErrorReport();
       var errorText = string.Join(";", countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
@@ -1184,7 +1178,7 @@ namespace GD.UploadData.Client
       Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count());
     }
     
-     /// <summary>
+    /// <summary>
     /// Получить записи справочника валюты из Excel.
     /// </summary>
     /// <param name="file">Файл.</param>

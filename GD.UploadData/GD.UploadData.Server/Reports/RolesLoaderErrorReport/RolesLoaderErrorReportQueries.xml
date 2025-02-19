@@ -20,7 +20,7 @@ where ReportSessionId = @ReportSessionId]]></postgres>
 (ReportSessionId citext NOT NULL,
  Name citext NULL,
  Note citext NULL,
- IsSingleUser boolean NULL,
+ IsSingleUser citext NULL,
  Recipients citext NULL,
  Error citext NULL)]]></postgres>
   </query>

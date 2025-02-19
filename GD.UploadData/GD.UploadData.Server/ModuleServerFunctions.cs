@@ -897,17 +897,8 @@ namespace GD.UploadData.Server
             record = Contacts.Create();
           record.Name = contact.Name;
           if (!string.IsNullOrEmpty(contact.Company))
-          {
             record.Company = GetCompanyRecord(contact.Company);
-            if (record.Company == null)
-              throw AppliedCodeException.Create(Resources.NotFoundCompanyExceptionTextFormat(contact.Company));
-          }
-          if (!string.IsNullOrEmpty(contact.JobTitle))
-          {
-            record.JobTitle = GetJobTitleRecord(contact.JobTitle, string.Empty).Name;
-            if (record.JobTitle == null)
-              throw AppliedCodeException.Create(Resources.NotFoundJobTitleExceptionTextFormat(contact.JobTitle, string.Empty));
-          }
+          record.JobTitle = contact.JobTitle;
           record.Phone = contact.Phone;
           record.Fax = contact.Fax;
           record.Email = contact.Email;
@@ -960,9 +951,9 @@ namespace GD.UploadData.Server
           record.Description = role.Note;
           foreach (var recipient in role.Recipients)
           {
+            record.RecipientLinks.Clear();
             var entity = GetRecipient(recipient);
-            if (!entity.IncludedIn(record))
-              record.RecipientLinks.AddNew().Member = entity;
+            record.RecipientLinks.AddNew().Member = entity;
           }
           record.IsSingleUser = role.IsSingleUser == Resources.Yes ? true : false;
           record.Save();
@@ -1225,7 +1216,7 @@ namespace GD.UploadData.Server
           record.NumberOfDigitsInNumber = Convert.ToInt32(documentRegister.NumberOfDigitsInItem);
           record.NumberingSection = GetNumberingSection(documentRegister.NumberedSection);
           record.NumberingPeriod = GetNumberingPeriod(documentRegister.NumberingPeriod);
-          record.RegistrationGroup = GetRegistrationGroup(documentRegister.Name);
+          record.RegistrationGroup = GetRegistrationGroup(documentRegister.RegistrationGroup);
           record.Save();
         }
         catch (Exception ex)
@@ -1262,15 +1253,15 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение периода нумераци.</returns>
     public Enumeration? GetNumberingPeriod(string period)
     {
-      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous))
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous;
-      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day))
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Day;
-      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month))
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Month;
-      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter))
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter;
-      if (period == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year))
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Year;
       
       return null;
@@ -1283,11 +1274,12 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение документопотока.</returns>
     public Enumeration? GetDocumentFlow(string name)
     {
-      var inner = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
-      var contracts = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
-      var incoming = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
-      var outgoing = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
+      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
+      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
+      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
+      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
       
+      // По какой-то причине сбились столобцы. надо будет завтра посмотреть уже что с этим не так. name = "Не нумеруемый".
       if (name == inner)
         return Sungero.Docflow.DocumentRegister.DocumentFlow.Inner;
       if (name == contracts)
@@ -1354,8 +1346,10 @@ namespace GD.UploadData.Server
           record.Code = documentKind.Code;
           record.DocumentFlow = GetDocumentFlow(documentKind.DocumentFlow);
           record.DocumentType = GetDocumentType(documentKind.DocumentType);
-          record.DeadlineInDays = Convert.ToInt32(documentKind.DeadlineDays);
-          record.DeadlineInHours = Convert.ToInt32(documentKind.DeadlineHours);
+          if (!string.IsNullOrEmpty(documentKind.DeadlineDays))
+            record.DeadlineInDays = Convert.ToInt32(documentKind.DeadlineDays);
+          if (!string.IsNullOrEmpty(documentKind.DeadlineHours))
+            record.DeadlineInHours = Convert.ToInt32(documentKind.DeadlineHours);
           record.Note = documentKind.Note;
           record.Save();
         }
