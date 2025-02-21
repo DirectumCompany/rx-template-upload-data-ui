@@ -895,7 +895,7 @@ namespace GD.UploadData.Server
           var record = GetContact(contact);
           if (record == null)
             record = Contacts.Create();
-          record.Name = contact.Name;
+          record.Name = contact.FullName.Trim();
           if (!string.IsNullOrEmpty(contact.Company))
             record.Company = GetCompanyRecord(contact.Company);
           record.JobTitle = contact.JobTitle;
@@ -925,7 +925,7 @@ namespace GD.UploadData.Server
       if (string.IsNullOrEmpty(contact.FullName) || string.IsNullOrEmpty(contact.Company))
         return null;
       
-      return Contacts.GetAll(c => c.Name == contact.Name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return Contacts.GetAll(c => c.Name == contact.FullName && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion
@@ -1046,12 +1046,13 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение типа отслеживания закрытия.</returns>
     public Sungero.Core.Enumeration? GetMonitoringType(string monitoringType)
     {
+      monitoringType = monitoringType.ToLower();
       var byProcessAndWindow = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
-        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow);
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow).ToLower();
       var manual = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
-        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Manual);
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Manual).ToLower();
       var process = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
-        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Process);
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Process).ToLower();
       
       if (monitoringType == byProcessAndWindow)
         return Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow;
@@ -1234,13 +1235,18 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение разреза нумераци.</returns>
     public Enumeration? GetNumberingSection(string section)
     {
-      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit))
+      section = section.ToLower();
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit)
+          .ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit;
-      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.Department))
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.Department)
+          .ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingSection.Department;
-      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument))
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument)
+          .ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument;
-      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.NoSection))
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.NoSection)
+          .ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingSection.NoSection;
       
       return null;
@@ -1253,15 +1259,16 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение периода нумераци.</returns>
     public Enumeration? GetNumberingPeriod(string period)
     {
-      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous))
+      period = period.ToLower();
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous).ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous;
-      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day).ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Day;
-      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month).ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Month;
-      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter).ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter;
-      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year))
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year).ToLower())
         return Sungero.Docflow.DocumentRegister.NumberingPeriod.Year;
       
       return null;
@@ -1274,10 +1281,11 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение документопотока.</returns>
     public Enumeration? GetDocumentFlow(string name)
     {
-      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
-      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
-      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
-      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
+      name = name.ToLower();
+      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower();
+      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
+      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
+      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
       
       // По какой-то причине сбились столобцы. надо будет завтра посмотреть уже что с этим не так. name = "Не нумеруемый".
       if (name == inner)
@@ -1299,8 +1307,9 @@ namespace GD.UploadData.Server
     /// <returns>Локализованное значение типа журнала.</returns>
     public Enumeration? GetRegisterType(string type)
     {
-      var registration = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Registration);
-      var numbering = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering);
+      type = type.ToLower();
+      var registration = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Registration).ToLower();
+      var numbering = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering).ToLower();
       
       if (type == numbering)
         return Sungero.Docflow.DocumentRegister.RegisterType.Numbering;

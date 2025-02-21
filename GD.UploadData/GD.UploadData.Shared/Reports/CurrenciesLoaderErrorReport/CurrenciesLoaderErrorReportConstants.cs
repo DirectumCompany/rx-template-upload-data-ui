@@ -5,6 +5,6 @@ namespace GD.UploadData.Constants
 {
   public static class CurrenciesLoaderErrorReport
   {
-    public const string SourceTableName = "Settings_Reports_СurrenciesLoaderError";
+    public const string SourceTableName = "Settings_Reports_currenciesLoaderError";
   }
 }

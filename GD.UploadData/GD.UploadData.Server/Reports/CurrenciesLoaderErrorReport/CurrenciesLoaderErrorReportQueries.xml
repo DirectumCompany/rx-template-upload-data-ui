@@ -2,10 +2,10 @@
 <queries>
   <query key="SelectFromTempTable">
     <mssql><![CDATA[select *
-from Settings_Reports_СurrenciesLoaderError
+from Settings_Reports_currenciesLoaderError
 where ReportSessionId = @ReportSessionId]]></mssql>
     <postgres><![CDATA[select *
-from Settings_Reports_СurrenciesLoaderError
+from Settings_Reports_currenciesLoaderError
 where ReportSessionId = @ReportSessionId]]></postgres>
   </query>
   <query key="CreateSourceTable">

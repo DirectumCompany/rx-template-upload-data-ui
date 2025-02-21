@@ -665,7 +665,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 3)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
         {
           var contact = Structures.Module.Contact.Create();
           try
@@ -704,7 +704,7 @@ namespace GD.UploadData.Client
       var report = Reports.GetContactsLoaderErrorReport();
       var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
                                                                          x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone,
-                                                                         x.Fax, x.Email, x.Homepage, x.Note, x.Error)).ToArray());
+                                                                         x.Fax, x.Email, x.Homepage, x.Note, x.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }

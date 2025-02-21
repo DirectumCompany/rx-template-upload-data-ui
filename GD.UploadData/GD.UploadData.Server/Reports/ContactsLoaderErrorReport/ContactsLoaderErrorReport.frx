@@ -41,8 +41,8 @@ namespace FastReport
         <Column Name="Homepage" DataType="System.String" PropName="Column5"/>
         <Column Name="Note" DataType="System.String" PropName="Column"/>
         <Column Name="BusinessUnit" Enabled="false" DataType="System.String" PropName="Column"/>
-        <Column Name="Fax" DataType="System.String" PropName="Column" Calculated="true" Expression=""/>
-        <Column Name="Error" DataType="System.String" PropName="Column" Calculated="true" Expression=""/>
+        <Column Name="Fax" DataType="System.String" PropName="Column"/>
+        <Column Name="Error" DataType="System.String" PropName="Column"/>
         <CommandParameter Name="ReportSessionId" DataType="16" IsDbType="true" Expression="[ReportSessionId]"/>
       </TableDataSource>
     </SungeroSqlDataConnection>
