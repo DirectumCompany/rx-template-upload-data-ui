@@ -805,8 +805,12 @@
       }
     ]
   },
+  "ExceptedRecipients": {
+    "$type": "Sungero.DataExport.ExportingObject[], Sungero.DataExport",
+    "$values": []
+  },
   "Uuid": "de9bec59-b71e-466f-bac8-1799d3a0c079",
-  "ModuleNameGuid": "5a9fb16f-f1a3-4965-8492-5a853351161b",
+  "ModuleNameGuid": "719f9950-43ad-4300-8559-130f76a6b0eb",
   "StoreAsDefaultSetting": true,
   "Status": "Active"
 }
