@@ -477,7 +477,10 @@
     "Yes",
     "LoadAssociatedApplications",
     "LoadDocumentRegister",
-    "LoadRegistrationGroup"
+    "LoadRegistrationGroup",
+    "LoadCurrencies",
+    "LoadCountries",
+    "LoadDocumentKinds"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

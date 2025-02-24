@@ -1008,7 +1008,7 @@ namespace GD.UploadData.Server
       {
         try
         {
-          var record = GetApplication(application);
+          var record = GetApplication(application.Name);
           if (record == null)
             record = Sungero.Content.AssociatedApplications.Create();
           record.Name = application.Name;
@@ -1030,13 +1030,13 @@ namespace GD.UploadData.Server
     /// </summary>
     /// <param name="application">Название записи справочника.</param>
     /// <returns>Запись справочника Приложение-обработчик.</returns>
-    public Sungero.Content.IAssociatedApplication GetApplication(Structures.Module.AssociatedApplication application)
+    public Sungero.Content.IAssociatedApplication GetApplication(string name)
     {
-      if (string.IsNullOrEmpty(application.Name))
+      if (string.IsNullOrEmpty(name))
         return null;
 
       return Sungero.Content.AssociatedApplications.GetAll(a => a.Status == Sungero.CoreEntities.DatabookEntry.Status.Active &&
-                                                           a.Name == application.Name).FirstOrDefault();
+                                                           a.Name == name).FirstOrDefault();
     }
     
     /// <summary>
@@ -1118,10 +1118,10 @@ namespace GD.UploadData.Server
     /// <param name="registrationGroups">Документопотоки.</param>
     public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
     {
-      var inner = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner);
-      var contracts = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts);
-      var incoming = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming);
-      var outgoing = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing);
+      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower();
+      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
+      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
+      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
       var flows = documentFlows.ToLower().Split(';');
       
       if (flows.Contains(inner))
@@ -1135,7 +1135,7 @@ namespace GD.UploadData.Server
     }
     
     /// <summary>
-    /// Получить запсь справочника Группа регистрации.
+    /// Получить запись справочника Группа регистрации.
     /// </summary>
     /// <param name="name">Название группы регистрации.</param>
     /// <param name="responsibleEmployee">Ответственны за группу регистрации.</param>
@@ -1151,7 +1151,7 @@ namespace GD.UploadData.Server
     }
     
     /// <summary>
-    /// Получить запсь справочника Группа регистрации.
+    /// Получить запись справочника Группа регистрации.
     /// </summary>
     /// <param name="name">Название группы регистрации.</param>
     /// <returns>Запись справочника группы регистрации.</returns>
@@ -1172,7 +1172,11 @@ namespace GD.UploadData.Server
     {
       var recipients = new List<IRecipient>();
       foreach (var recipient in recipientNames.Split(';'))
+      {
+        if (string.IsNullOrEmpty(recipient))
+          continue;
         recipients.Add(GetRecipient(recipient));
+      }
       
       return recipients;
     }
@@ -1186,8 +1190,11 @@ namespace GD.UploadData.Server
     {
       var departments = new List<IDepartment>();
       foreach (var department in departmentNames.Split(';'))
+      {
+        if (string.IsNullOrEmpty(department))
+          continue;
         departments.Add(GetDepartmentRecord(department));
-      
+      }
       return departments;
     }
     
@@ -1287,7 +1294,6 @@ namespace GD.UploadData.Server
       var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
       var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
       
-      // По какой-то причине сбились столобцы. надо будет завтра посмотреть уже что с этим не так. name = "Не нумеруемый".
       if (name == inner)
         return Sungero.Docflow.DocumentRegister.DocumentFlow.Inner;
       if (name == contracts)
@@ -1403,7 +1409,7 @@ namespace GD.UploadData.Server
     /// <summary>
     /// Создать или обновить записи справочника Страна.
     /// </summary>
-    /// <param name="documentKinds">Список стран.</param>
+    /// <param name="countries">Список стран.</param>
     /// <returns>Список стран.</returns>
     [Remote]
     public List<Structures.Module.Country> CreateOrUpdateCountries(List<Structures.Module.Country> countries)
@@ -1431,7 +1437,7 @@ namespace GD.UploadData.Server
     /// Получить запись справочника Страна.
     /// </summary>
     /// <param name="name">Название.</param>
-    /// <returns>Запись справочникаСтрана.</returns>
+    /// <returns>Запись справочника Страна.</returns>
     public ICountry GetCountryRecord(string name)
     {
       if (string.IsNullOrEmpty(name))

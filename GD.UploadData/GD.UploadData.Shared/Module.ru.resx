@@ -215,4 +215,13 @@
   <data name="LoadRegistrationGroup" xml:space="preserve">
     <value>Загрузить группы регистрации</value>
   </data>
+  <data name="LoadCurrencies" xml:space="preserve">
+    <value>Загрузить валюты</value>
+  </data>
+  <data name="LoadCountries" xml:space="preserve">
+    <value>Загрузить страны</value>
+  </data>
+  <data name="LoadDocumentKinds" xml:space="preserve">
+    <value>Загрузить виды документов</value>
+  </data>
 </root>

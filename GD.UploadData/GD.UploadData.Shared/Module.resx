@@ -215,4 +215,13 @@ Of them with an error: {1}</value>
   <data name="LoadRegistrationGroup" xml:space="preserve">
     <value>Load registration group</value>
   </data>
+  <data name="LoadCurrencies" xml:space="preserve">
+    <value>Load currencies</value>
+  </data>
+  <data name="LoadCountries" xml:space="preserve">
+    <value>Load countries</value>
+  </data>
+  <data name="LoadDocumentKinds" xml:space="preserve">
+    <value>Load document kinds</value>
+  </data>
 </root>

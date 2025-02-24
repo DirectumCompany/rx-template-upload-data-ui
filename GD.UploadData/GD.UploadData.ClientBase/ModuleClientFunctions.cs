@@ -1020,9 +1020,9 @@ namespace GD.UploadData.Client
     /// <summary>
     /// Загрузить виды документов.
     /// </summary>
-    public void LoadDocumentKind()
+    public void LoadDocumentKinds()
     {
-      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentKinds);
       if (file == null)
         return;
       var documentKinds = GetDocumentKindFromExcel(file);
@@ -1100,7 +1100,7 @@ namespace GD.UploadData.Client
     /// </summary>
     public void LoadCountries()
     {
-      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      var file = GetExcelFromFileSelectDialog(Resources.LoadCountries);
       if (file == null)
         return;
       var countries = GetСountriesFromExcel(file);
@@ -1165,9 +1165,9 @@ namespace GD.UploadData.Client
     /// <summary>
     /// Загрузить валюты.
     /// </summary>
-    public void LoadCurrency()
+    public void LoadCurrencies()
     {
-      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      var file = GetExcelFromFileSelectDialog(Resources.LoadCurrencies);
       if (file == null)
         return;
       var currencies = GetCurrenciesFromExcel(file);
