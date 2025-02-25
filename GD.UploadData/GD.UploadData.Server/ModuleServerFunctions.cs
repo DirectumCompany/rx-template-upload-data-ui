@@ -1184,7 +1184,7 @@ namespace GD.UploadData.Server
     /// <summary>
     /// Получить список Подразделений.
     /// </summary>
-    /// <param name="departments">Название подразделения.</param>
+    /// <param name="departmentNames">Название подразделения.</param>
     /// <returns>Список подразделений.</returns>
     public List<IDepartment> GetDepartments(string departmentNames)
     {
@@ -1326,6 +1326,11 @@ namespace GD.UploadData.Server
       return null;
     }
     
+    /// <summary>
+    /// Получить запись справочника Журнал регистрации.
+    /// </summary>
+    /// <param name="documentRegister">Журнал регистрации.</param>
+    /// <returns>Запись справочника Журнал регистрации.</returns>
     public IDocumentRegister GetDocumentRegisterRecord(Structures.Module.DocumentRegister documentRegister)
     {
       if (string.IsNullOrEmpty(documentRegister.Name))
