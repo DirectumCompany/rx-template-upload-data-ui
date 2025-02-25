@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<queries>
+  <query key="SelectFromTempTable">
+    <mssql><![CDATA[select *
+from Settings_Reports_ContactsLoaderError
+where ReportSessionId = @ReportSessionId]]></mssql>
+    <postgres><![CDATA[select *
+from Settings_Reports_ContactsLoaderError
+where ReportSessionId = @ReportSessionId]]></postgres>
+  </query>
+  <query key="CreateSourceTable">
+    <mssql><![CDATA[create table {0}
+([ReportSessionId] varchar(256) NOT NULL,
+ [LastName] nvarchar(max) NULL,
+ [Name] nvarchar(max) NULL,
+ [MiddleName] nvarchar(max) NULL,
+ [Company] nvarchar(max) NULL,
+ [JobTitle] nvarchar(max) NULL,
+ [Phone] nvarchar(max) NULL,
+ [Fax] nvarchar(max) NULL,
+ [Email] nvarchar(max) NULL,
+ [Homepage] nvarchar(max) NULL,
+ [Note] nvarchar(max) NULL,
+ [Error] nvarchar(max) NULL)]]></mssql>
+    <postgres><![CDATA[create table {0}
+(ReportSessionId citext NOT NULL,
+ LastName citext NULL,
+ Name citext NULL,
+ MiddleName citext NULL,
+ Company citext NULL,
+ JobTitle citext NULL,
+ Phone citext NULL,
+ Fax citext NULL,
+ Email citext NULL,
+ Homepage citext NULL,
+ Note citext NULL,
+ Error citext NULL)]]></postgres>
+  </query>
+</queries>
