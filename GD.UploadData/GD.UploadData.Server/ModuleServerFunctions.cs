@@ -1115,7 +1115,7 @@ namespace GD.UploadData.Server
     /// Установить значение регистрируемых докуметопотоков.
     /// </summary>
     /// <param name="record">Группа регистрации.</param>
-    /// <param name="registrationGroups">Документопотоки.</param>
+    /// <param name="documentFlows">Документопотоки.</param>
     public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
     {
       var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower();
@@ -1138,7 +1138,7 @@ namespace GD.UploadData.Server
     /// Получить запись справочника Группа регистрации.
     /// </summary>
     /// <param name="name">Название группы регистрации.</param>
-    /// <param name="responsibleEmployee">Ответственны за группу регистрации.</param>
+    /// <param name="responsibleEmployee">Ответственный за группу регистрации.</param>
     /// <param name="index">Индекс группы регистрации.</param>
     /// <returns>Запись справочника группы регистрации.</returns>
     public IRegistrationGroup GetRegistrationGroup(string name, string responsibleEmployee, string index)
@@ -1166,7 +1166,7 @@ namespace GD.UploadData.Server
     /// <summary>
     /// Получить список участников группы регистрации.
     /// </summary>
-    /// <param name="resipients">Название группы.</param>
+    /// <param name="recipientNames">Название группы.</param>
     /// <returns>Список участников группы регистрации.</returns>
     public List<IRecipient> GetRecipients(string recipientNames)
     {
