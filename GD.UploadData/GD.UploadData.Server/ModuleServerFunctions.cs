@@ -1365,11 +1365,24 @@ namespace GD.UploadData.Server
           record.ShortName = documentKind.ShortName;
           record.Code = documentKind.Code;
           record.DocumentFlow = GetDocumentFlow(documentKind.DocumentFlow);
-          record.DocumentType = GetDocumentType(documentKind.DocumentType);
+          record.DocumentType = GetDocumentType(documentKind.DocumentType, documentKind.DocumentFlow);
+          if (record.DocumentType.DocumentFlow != record.DocumentFlow)
+            throw AppliedCodeException.Create(Resources.InvalidDocumentType);
+          if (!string.IsNullOrEmpty(documentKind.NumerationType))
+            record.NumberingType = GetNumberingType(documentKind.NumerationType);
+          var deadline = 0;
           if (!string.IsNullOrEmpty(documentKind.DeadlineDays))
-            record.DeadlineInDays = Convert.ToInt32(documentKind.DeadlineDays);
+          {
+            if (!int.TryParse(documentKind.DeadlineDays, out deadline))
+              throw AppliedCodeException.Create(Resources.IncorrectDataFormatDeadlineInDays);
+            record.DeadlineInDays = deadline;
+          }
           if (!string.IsNullOrEmpty(documentKind.DeadlineHours))
-            record.DeadlineInHours = Convert.ToInt32(documentKind.DeadlineHours);
+          {
+            if (!int.TryParse(documentKind.DeadlineHours, out deadline))
+              throw AppliedCodeException.Create(Resources.IncorrectDataFromatDeadlineInHours);
+            record.DeadlineInHours = deadline;
+          }
           record.Note = documentKind.Note;
           record.Save();
         }
@@ -1382,13 +1395,35 @@ namespace GD.UploadData.Server
     }
     
     /// <summary>
+    /// Получить Тип нумерации.
+    /// </summary>
+    /// <param name="numberingType">Название типа нумерации.</param>
+    /// <returns>Локализованное значание типа нумерации.</returns>
+    public Enumeration? GetNumberingType(string numberingType)
+    {
+      numberingType = numberingType.ToLower();
+      var numerable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.Numerable).ToLower();
+      var notNumerable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.NotNumerable).ToLower();
+      var registrable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.Registrable).ToLower();
+      
+      if (numberingType == numerable)
+        return Sungero.Docflow.DocumentKind.NumberingType.Numerable;
+      if (numberingType == notNumerable)
+        return Sungero.Docflow.DocumentKind.NumberingType.NotNumerable;
+      if (numberingType == registrable)
+        return Sungero.Docflow.DocumentKind.NumberingType.Registrable;
+      
+      return null;
+    }
+    
+    /// <summary>
     /// Получить запись справочника Тип документа.
     /// </summary>
     /// <param name="name">Название.</param>
     /// <returns>Запись справочника Тип документа.</returns>
-    public IDocumentType GetDocumentType(string name)
+    public IDocumentType GetDocumentType(string name, string documentFlow)
     {
-      if (string.IsNullOrEmpty(name))
+      if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(documentFlow))
         return null;
       
       return DocumentTypes.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
@@ -1475,6 +1510,7 @@ namespace GD.UploadData.Server
           record.FractionName = currency.FractionName;
           record.AlphaCode = currency.AlphaCode;
           record.NumericCode = currency.NumericCode;
+          record.Status = Sungero.Commons.Currency.Status.Active;
           record.Save();
         }
         catch (Exception ex)
@@ -1494,8 +1530,9 @@ namespace GD.UploadData.Server
     {
       if (string.IsNullOrEmpty(name))
         return null;
-      
-      return Currencies.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      var abc = Currencies.GetAll().ToList();
+      var q = abc.Where(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return abc.Where(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion

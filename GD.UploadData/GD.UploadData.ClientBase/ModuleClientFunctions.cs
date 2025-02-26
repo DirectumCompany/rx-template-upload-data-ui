@@ -1057,7 +1057,7 @@ namespace GD.UploadData.Client
             documentKind.Name = range.Cell(1,1).Value.ToString()?.Trim();
             documentKind.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
             documentKind.Code = range.Cell(1,3).Value.ToString()?.Trim();
-            documentKind.NumerationType = range.Cell(1,3).Value.ToString()?.Trim();
+            documentKind.NumerationType = range.Cell(1,4).Value.ToString()?.Trim();
             documentKind.DocumentFlow = range.Cell(1,5).Value.ToString()?.Trim();
             documentKind.DocumentType = range.Cell(1,6).Value.ToString()?.Trim();
             documentKind.DeadlineDays = range.Cell(1,7).Value.ToString()?.Trim();

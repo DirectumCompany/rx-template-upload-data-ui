@@ -224,4 +224,13 @@
   <data name="LoadDocumentKinds" xml:space="preserve">
     <value>Загрузить виды документов</value>
   </data>
+  <data name="InvalidDocumentType" xml:space="preserve">
+    <value>Тип документа не принадлежит выбранному документопотоку.</value>
+  </data>
+  <data name="IncorrectDataFormatDeadlineInDays" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Рассмотрение дней"</value>
+  </data>
+  <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Рассмотрение часов"</value>
+  </data>
 </root>

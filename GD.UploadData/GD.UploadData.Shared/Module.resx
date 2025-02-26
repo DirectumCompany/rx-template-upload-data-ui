@@ -224,4 +224,13 @@ Of them with an error: {1}</value>
   <data name="LoadDocumentKinds" xml:space="preserve">
     <value>Load document kinds</value>
   </data>
+  <data name="InvalidDocumentType" xml:space="preserve">
+    <value>The document type does not belong to the selected document flow.</value>
+  </data>
+  <data name="IncorrectDataFormatDeadlineInDays" xml:space="preserve">
+    <value>Incorrect data format in the column "Deadline in days"</value>
+  </data>
+  <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
+    <value>Incorrect data format in the column "Deadline in hours"</value>
+  </data>
 </root>
