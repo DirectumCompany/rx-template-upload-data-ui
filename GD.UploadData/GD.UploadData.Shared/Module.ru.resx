@@ -233,4 +233,13 @@
   <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
     <value>Неверный формат данных в столбце "Рассмотрение часов"</value>
   </data>
+  <data name="IncorrectFormatNumberingDigitsInNumber" xml:space="preserve">
+    <value>Неверный формат свойства "Кол-во цифр в номере"</value>
+  </data>
+  <data name="RecipientNotFound" xml:space="preserve">
+    <value>Субъект с таким именем не найден: {0}</value>
+  </data>
+  <data name="ResponsibleNotFound" xml:space="preserve">
+    <value>Не найден ответственный</value>
+  </data>
 </root>

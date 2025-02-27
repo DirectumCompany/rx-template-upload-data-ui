@@ -233,4 +233,13 @@ Of them with an error: {1}</value>
   <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
     <value>Incorrect data format in the column "Deadline in hours"</value>
   </data>
+  <data name="IncorrectFormatNumberingDigitsInNumber" xml:space="preserve">
+    <value>Incorrect format of the "Number of digits in number"</value>
+  </data>
+  <data name="RecipientNotFound" xml:space="preserve">
+    <value>No subject by that name was found: {0}</value>
+  </data>
+  <data name="ResponsibleNotFound" xml:space="preserve">
+    <value>Responsible not found</value>
+  </data>
 </root>

@@ -670,18 +670,18 @@ namespace GD.UploadData.Client
           var contact = Structures.Module.Contact.Create();
           try
           {
-            contact.FullName = string.Join(" ", range.Cell(1,1).Value.ToString().Trim(), range.Cell(1,2).Value.ToString().Trim(),
-                                           range.Cell(1,3).Value.ToString().Trim());
-            contact.LastName = range.Cell(1,1).Value.ToString().Trim();
-            contact.Name = range.Cell(1,2).Value.ToString().Trim();
-            contact.MiddleName = range.Cell(1,3).Value.ToString().Trim();
-            contact.Company = range.Cell(1,4).Value.ToString();
-            contact.JobTitle = range.Cell(1,5).Value.ToString();
-            contact.Phone = range.Cell(1,6).Value.ToString();
-            contact.Fax = range.Cell(1,7).Value.ToString();
-            contact.Email = range.Cell(1,8).Value.ToString();
-            contact.Homepage = range.Cell(1,9).Value.ToString();
-            contact.Note = range.Cell(1,10).Value.ToString();
+            contact.FullName = string.Join(" ", range.Cell(1,1).Value.ToString()?.Trim(), range.Cell(1,2).Value.ToString()?.Trim(),
+                                           range.Cell(1,3).Value.ToString()?.Trim());
+            contact.LastName = range.Cell(1,1).Value.ToString()?.Trim();
+            contact.Name = range.Cell(1,2).Value.ToString()?.Trim();
+            contact.MiddleName = range.Cell(1,3).Value.ToString()?.Trim();
+            contact.Company = range.Cell(1,4).Value.ToString()?.Trim();
+            contact.JobTitle = range.Cell(1,5).Value.ToString()?.Trim();
+            contact.Phone = range.Cell(1,6).Value.ToString()?.Trim();
+            contact.Fax = range.Cell(1,7).Value.ToString()?.Trim();
+            contact.Email = range.Cell(1,8).Value.ToString()?.Trim();
+            contact.Homepage = range.Cell(1,9).Value.ToString()?.Trim();
+            contact.Note = range.Cell(1,10).Value.ToString()?.Trim();
           }
           catch (Exception ex)
           {
@@ -753,7 +753,7 @@ namespace GD.UploadData.Client
           {
             role.Name = range.Cell(1,1).Value.ToString().Trim();
             role.Note = range.Cell(1,2).Value.ToString().Trim();
-            foreach (var recipient in range.Cell(1,3).Value.ToString().Split(';'))
+            foreach (var recipient in range.Cell(1,3).Value.ToString().Split(','))
             {
               role.Recipients.Add(recipient);
             }
@@ -781,7 +781,7 @@ namespace GD.UploadData.Client
       var errorText = string.Empty;
       var recipients = string.Empty;
       errorText = string.Join(";", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, 
-                                                                   string.Join(";", x.Recipients), x.Error)));
+                                                                   string.Join(",", x.Recipients), x.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -829,7 +829,7 @@ namespace GD.UploadData.Client
             application.Name = range.Cell(1,1).Value.ToString()?.Trim();
             application.Extension = range.Cell(1,2).Value.ToString()?.Trim();
             application.MonitoringType = range.Cell(1,3).Value.ToString()?.Trim();
-            application.OpenByDefaultForReading = range.Cell(1,4).Value.ToString();
+            application.OpenByDefaultForReading = range.Cell(1,4).Value.ToString()?.Trim();
           }
           catch (Exception ex)
           {

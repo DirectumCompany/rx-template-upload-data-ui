@@ -816,6 +816,7 @@ namespace GD.UploadData.Server
     {
       if (string.IsNullOrEmpty(name))
         return null;
+      
       return Employees.GetAll(x => x.Person.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
@@ -975,8 +976,11 @@ namespace GD.UploadData.Server
     {
       if (string.IsNullOrEmpty(recipient))
         return null;
+      var existingRecipient = Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      if (existingRecipient == null)
+        throw AppliedCodeException.Create(Resources.RecipientNotFoundFormat(recipient));
       
-      return Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return existingRecipient;
     }
     
     /// <summary>
@@ -1085,7 +1089,10 @@ namespace GD.UploadData.Server
             record = RegistrationGroups.Create();
           record.Name = registrationGroup.Name;
           record.Index = registrationGroup.Index;
-          record.ResponsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
+          var responsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
+          if (responsibleEmployee == null)
+            throw AppliedCodeException.Create(Resources.ResponsibleNotFound);
+          record.ResponsibleEmployee = responsibleEmployee;
           SetDocumentFlow(record, registrationGroup.DocumentFlow);
           
           foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
@@ -1122,7 +1129,7 @@ namespace GD.UploadData.Server
       var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
       var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
       var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
-      var flows = documentFlows.ToLower().Split(';');
+      var flows = documentFlows.ToLower().Split(',');
       
       if (flows.Contains(inner))
         record.CanRegisterInternal = true;
@@ -1171,7 +1178,7 @@ namespace GD.UploadData.Server
     public List<IRecipient> GetRecipients(string recipientNames)
     {
       var recipients = new List<IRecipient>();
-      foreach (var recipient in recipientNames.Split(';'))
+      foreach (var recipient in recipientNames.Split(','))
       {
         if (string.IsNullOrEmpty(recipient))
           continue;
@@ -1189,7 +1196,7 @@ namespace GD.UploadData.Server
     public List<IDepartment> GetDepartments(string departmentNames)
     {
       var departments = new List<IDepartment>();
-      foreach (var department in departmentNames.Split(';'))
+      foreach (var department in departmentNames.Split(','))
       {
         if (string.IsNullOrEmpty(department))
           continue;
@@ -1221,10 +1228,15 @@ namespace GD.UploadData.Server
           record.RegisterType = GetRegisterType(documentRegister.RegisterType);
           record.Index = documentRegister.Index;
           record.DocumentFlow = GetDocumentFlow(documentRegister.DocumentFlow);
-          record.NumberOfDigitsInNumber = Convert.ToInt32(documentRegister.NumberOfDigitsInItem);
+          var numberOfDigitsInNumber = 0;
+          if (!int.TryParse(documentRegister.NumberOfDigitsInItem, out numberOfDigitsInNumber))
+            throw AppliedCodeException.Create(Resources.IncorrectFormatNumberingDigitsInNumber);
+          record.NumberOfDigitsInNumber = numberOfDigitsInNumber;
           record.NumberingSection = GetNumberingSection(documentRegister.NumberedSection);
           record.NumberingPeriod = GetNumberingPeriod(documentRegister.NumberingPeriod);
-          record.RegistrationGroup = GetRegistrationGroup(documentRegister.RegistrationGroup);
+          if (record.RegisterType.Value.Value != DocumentRegisters.Info.Properties.RegisterType.
+              GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering))
+            record.RegistrationGroup = GetRegistrationGroup(documentRegister.RegistrationGroup);
           record.Save();
         }
         catch (Exception ex)
