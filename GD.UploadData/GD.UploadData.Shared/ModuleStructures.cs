@@ -331,7 +331,7 @@ namespace GD.UploadData.Structures.Module
     
     public string IsSingleUser { get; set;}
     
-    public List<string> Recipients { get; set; }
+    public string Recipients { get; set; }
     
     public string Error { get; set; }
   }

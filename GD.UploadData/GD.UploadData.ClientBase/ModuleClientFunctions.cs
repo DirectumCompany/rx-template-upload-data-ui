@@ -748,16 +748,12 @@ namespace GD.UploadData.Client
         while(!(range = worksheet.Range(currentRow, 1, currentRow, 4)).IsEmpty())
         {
           var role = Structures.Module.Role.Create();
-          role.Recipients = new List<string>();
           try
           {
-            role.Name = range.Cell(1,1).Value.ToString().Trim();
-            role.Note = range.Cell(1,2).Value.ToString().Trim();
-            foreach (var recipient in range.Cell(1,3).Value.ToString().Split(','))
-            {
-              role.Recipients.Add(recipient);
-            }
-            role.IsSingleUser = range.Cell(1,4).Value.ToString();
+            role.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            role.Note = range.Cell(1,2).Value.ToString()?.Trim();
+            role.Recipients = range.Cell(1,3).Value.ToString()?.Trim();
+            role.IsSingleUser = range.Cell(1,4).Value.ToString()?.Trim();
           }
           catch (Exception ex)
           {
@@ -778,10 +774,7 @@ namespace GD.UploadData.Client
     private void ShowRolesLoaderReport(List<Structures.Module.Role> roles)
     {
       var report = Reports.GetRolesLoaderErrorReport();
-      var errorText = string.Empty;
-      var recipients = string.Empty;
-      errorText = string.Join(";", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, 
-                                                                   string.Join(",", x.Recipients), x.Error)));
+      var errorText = string.Join("#", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, x.Recipients, x.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -927,7 +920,7 @@ namespace GD.UploadData.Client
     public void ShowRegistrationGroupsLoaderReport(List<Structures.Module.RegistrationGroup> registrationsGroups)
     {
       var report = Reports.GetRegistrationGroupLoaderErrorReport();
-      var errorText = string.Join(";", registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+      var errorText = string.Join("#", registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
                                                                                      a.Name, a.Index, a.ResponsibleEmployee,
                                                                                      a.DocumentFlow, a.RecipientLinks,
                                                                                      a.Departments, a.Description, a.Error)).ToArray());

@@ -15,7 +15,7 @@ namespace GD.UploadData
       RolesLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.RolesLoaderErrorReport.Role>();
-      foreach (var role in RolesLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var role in RolesLoaderErrorReport.LoaderErrorsStructure.Split('#'))
         tableData.Add(Structures.RolesLoaderErrorReport.Role.Create(
           reportSessionId,
           role.Split('|')[0],

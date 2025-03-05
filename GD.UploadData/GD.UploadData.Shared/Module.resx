@@ -242,4 +242,16 @@ Of them with an error: {1}</value>
   <data name="ResponsibleNotFound" xml:space="preserve">
     <value>Responsible not found</value>
   </data>
+  <data name="InvalidDocumentFlow" xml:space="preserve">
+    <value>The document flow not found.</value>
+  </data>
+  <data name="DocumentTypeNotFound" xml:space="preserve">
+    <value>Document type not found</value>
+  </data>
+  <data name="IncorrectDataFormatRecipientLinks" xml:space="preserve">
+    <value>Incorrect data format in the column "Recipients".</value>
+  </data>
+  <data name="IncorrectDataFormatDepartments" xml:space="preserve">
+    <value>Incorrect data format in the column "Departments".</value>
+  </data>
 </root>

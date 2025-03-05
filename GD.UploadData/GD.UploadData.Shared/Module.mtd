@@ -486,7 +486,11 @@
     "IncorrectDataFromatDeadlineInHours",
     "IncorrectFormatNumberingDigitsInNumber",
     "RecipientNotFound",
-    "ResponsibleNotFound"
+    "ResponsibleNotFound",
+    "InvalidDocumentFlow",
+    "DocumentTypeNotFound",
+    "IncorrectDataFormatRecipientLinks",
+    "IncorrectDataFormatDepartments"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

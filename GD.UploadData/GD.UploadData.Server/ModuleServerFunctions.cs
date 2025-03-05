@@ -950,12 +950,16 @@ namespace GD.UploadData.Server
             record = Roles.Create();
           record.Name = role.Name;
           record.Description = role.Note;
-          foreach (var recipient in role.Recipients)
+          
+          foreach (var recipient in GetRecipients(role.Recipients))
           {
-            record.RecipientLinks.Clear();
-            var entity = GetRecipient(recipient);
-            record.RecipientLinks.AddNew().Member = entity;
+            if (record.RecipientLinks.Where(r => r.Member.Equals(recipient)).Any())
+              continue;
+            
+            var employee = record.RecipientLinks.AddNew();
+            employee.Member = recipient;
           }
+          
           record.IsSingleUser = role.IsSingleUser == Resources.Yes ? true : false;
           record.Save();
         }
@@ -976,6 +980,7 @@ namespace GD.UploadData.Server
     {
       if (string.IsNullOrEmpty(recipient))
         return null;
+      var recipientsall = Recipients.GetAll().ToList();
       var existingRecipient = Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
       if (existingRecipient == null)
         throw AppliedCodeException.Create(Resources.RecipientNotFoundFormat(recipient));
@@ -1097,12 +1102,16 @@ namespace GD.UploadData.Server
           
           foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
           {
+            if (record.RecipientLinks.Where(r => r.Member.Equals(recipient)).Any())
+              continue;
             var employee = record.RecipientLinks.AddNew();
             employee.Member = recipient;
           }
           
           foreach (var department in GetDepartments(registrationGroup.Departments))
           {
+            if (record.Departments.Where(r => r.Department.Equals(department)).Any())
+              continue;
             var recordDepartment = record.Departments.AddNew();
             recordDepartment.Department = department;
           }
@@ -1129,16 +1138,21 @@ namespace GD.UploadData.Server
       var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
       var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
       var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
-      var flows = documentFlows.ToLower().Split(',');
       
-      if (flows.Contains(inner))
-        record.CanRegisterInternal = true;
-      if (flows.Contains(contracts))
-        record.CanRegisterContractual = true;
-      if (flows.Contains(incoming))
-        record.CanRegisterIncoming = true;
-      if (flows.Contains(outgoing))
-        record.CanRegisterOutgoing = true;
+      foreach (var flow in documentFlows.ToLower().Split(';'))
+      {
+        if (string.IsNullOrEmpty(flow))
+          continue;
+        
+        if (flow.Contains(inner))
+          record.CanRegisterInternal = true;
+        if (flow.Contains(contracts))
+          record.CanRegisterContractual = true;
+        if (flow.Contains(incoming))
+          record.CanRegisterIncoming = true;
+        if (flow.Contains(outgoing))
+          record.CanRegisterOutgoing = true;
+      }
     }
     
     /// <summary>
@@ -1178,11 +1192,16 @@ namespace GD.UploadData.Server
     public List<IRecipient> GetRecipients(string recipientNames)
     {
       var recipients = new List<IRecipient>();
-      foreach (var recipient in recipientNames.Split(','))
+      foreach (var recipient in recipientNames.Split(';'))
       {
         if (string.IsNullOrEmpty(recipient))
           continue;
-        recipients.Add(GetRecipient(recipient));
+        
+        var rec = GetRecipient(recipient.Trim());
+        if (rec == null)
+          continue;
+        
+        recipients.Add(rec);
       }
       
       return recipients;
@@ -1196,11 +1215,12 @@ namespace GD.UploadData.Server
     public List<IDepartment> GetDepartments(string departmentNames)
     {
       var departments = new List<IDepartment>();
-      foreach (var department in departmentNames.Split(','))
+      foreach (var department in departmentNames.Split(';'))
       {
         if (string.IsNullOrEmpty(department))
           continue;
-        departments.Add(GetDepartmentRecord(department));
+        
+        departments.Add(GetDepartmentRecord(department.Trim()));
       }
       return departments;
     }
@@ -1376,12 +1396,23 @@ namespace GD.UploadData.Server
           record.Name = documentKind.Name;
           record.ShortName = documentKind.ShortName;
           record.Code = documentKind.Code;
-          record.DocumentFlow = GetDocumentFlow(documentKind.DocumentFlow);
-          record.DocumentType = GetDocumentType(documentKind.DocumentType, documentKind.DocumentFlow);
+          
+          var documentFlow = GetDocumentFlow(documentKind.DocumentFlow);
+          if (documentFlow == null)
+            throw AppliedCodeException.Create(Resources.InvalidDocumentFlow);
+          record.DocumentFlow = documentFlow;
+          
+          var documentType = GetDocumentType(documentKind.DocumentType, documentKind.DocumentFlow);
+          if (documentType == null)
+            throw AppliedCodeException.Create(Resources.DocumentTypeNotFound);
+          record.DocumentType = documentType;
+          
           if (record.DocumentType.DocumentFlow != record.DocumentFlow)
             throw AppliedCodeException.Create(Resources.InvalidDocumentType);
+          
           if (!string.IsNullOrEmpty(documentKind.NumerationType))
             record.NumberingType = GetNumberingType(documentKind.NumerationType);
+          
           var deadline = 0;
           if (!string.IsNullOrEmpty(documentKind.DeadlineDays))
           {
@@ -1395,6 +1426,7 @@ namespace GD.UploadData.Server
               throw AppliedCodeException.Create(Resources.IncorrectDataFromatDeadlineInHours);
             record.DeadlineInHours = deadline;
           }
+          
           record.Note = documentKind.Note;
           record.Save();
         }
@@ -1470,7 +1502,7 @@ namespace GD.UploadData.Server
       {
         try
         {
-          var record = GetCountryRecord(country.Name);
+          var record = GetCountryRecord(country.Name, country.Code);
           if (record == null)
             record = Countries.Create();
           record.Name = country.Name;
@@ -1490,12 +1522,12 @@ namespace GD.UploadData.Server
     /// </summary>
     /// <param name="name">Название.</param>
     /// <returns>Запись справочника Страна.</returns>
-    public ICountry GetCountryRecord(string name)
+    public ICountry GetCountryRecord(string name, string code)
     {
       if (string.IsNullOrEmpty(name))
         return null;
       
-      return Countries.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return Countries.GetAll(c => c.Name == name && c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion
