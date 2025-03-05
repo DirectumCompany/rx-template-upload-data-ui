@@ -1075,7 +1075,7 @@ namespace GD.UploadData.Client
     public void ShowDocumentKindsLoaderReport(List<Structures.Module.DocumentKind> documentKinds)
     {
       var report = Reports.GetDocumentKindsLoaderErrorReport();
-      var errorText = string.Join(";", documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+      var errorText = string.Join("#", documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
                                                                                a.Name, a.ShortName, a.Code,
                                                                                a.NumerationType, a.DocumentFlow,
                                                                                a.DocumentType, a.DeadlineDays,
