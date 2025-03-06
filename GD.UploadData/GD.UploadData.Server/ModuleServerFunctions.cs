@@ -1101,6 +1101,8 @@ namespace GD.UploadData.Server
           
           foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
           {
+            if (record.RecipientLinks.Any(r => r.Member.Equals(recipient)))
+              continue;
             var employee = record.RecipientLinks.AddNew();
             employee.Member = recipient;
           }
@@ -1131,6 +1133,10 @@ namespace GD.UploadData.Server
     /// <param name="documentFlows">Документопотоки.</param>
     public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
     {
+      record.CanRegisterInternal = false;
+      record.CanRegisterContractual = false;
+      record.CanRegisterIncoming = false;
+      record.CanRegisterOutgoing = false;
       foreach (var flow in documentFlows.ToLower().Split(';'))
       {
         if (string.IsNullOrEmpty(flow))
