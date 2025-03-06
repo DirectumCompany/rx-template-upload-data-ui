@@ -1506,11 +1506,16 @@ namespace GD.UploadData.Server
       {
         try
         {
-          var record = GetCountryRecord(country.Name, country.Code);
+          var record = Countries.GetAll(c => c.Name == country.Name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
           if (record == null)
-            record = Countries.Create();
-          else
-            throw AppliedCodeException.Create(Resources.FoundCountryDuplicates);
+          {
+            record = Countries.GetAll(c => c.Code == country.Code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+            if (record == null)
+              record = Countries.Create();
+            else
+              throw AppliedCodeException.Create(Resources.FoundCountryDuplicates);
+          }
+          
           record.Name = country.Name;
           record.Code = country.Code;
           record.Save();
@@ -1522,23 +1527,6 @@ namespace GD.UploadData.Server
       }
       
       return countries;
-    }
-    
-    /// <summary>
-    /// Получить запись справочника Страна.
-    /// </summary>
-    /// <param name="name">Название.</param>
-    /// <returns>Запись справочника Страна.</returns>
-    public ICountry GetCountryRecord(string name, string code)
-    {
-      if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(code))
-        return null;
-      
-      var country = Countries.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
-      if (country == null)
-        country = Countries.GetAll(c => c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
-      
-      return country;
     }
     
     #endregion
