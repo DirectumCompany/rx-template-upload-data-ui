@@ -1509,6 +1509,8 @@ namespace GD.UploadData.Server
           var record = GetCountryRecord(country.Name, country.Code);
           if (record == null)
             record = Countries.Create();
+          else
+            throw AppliedCodeException.Create(Resources.FoundCountryDuplicates);
           record.Name = country.Name;
           record.Code = country.Code;
           record.Save();
@@ -1518,6 +1520,7 @@ namespace GD.UploadData.Server
           country.Error = ex.Message;
         }
       }
+      
       return countries;
     }
     
@@ -1532,8 +1535,10 @@ namespace GD.UploadData.Server
         return null;
       
       var country = Countries.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
-      return country.Code == code ?
-        country : Countries.GetAll(c => c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      if (country == null)
+        country = Countries.GetAll(c => c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      
+      return country;
     }
     
     #endregion

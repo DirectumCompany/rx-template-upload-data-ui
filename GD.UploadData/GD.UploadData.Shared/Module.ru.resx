@@ -254,4 +254,7 @@
   <data name="IncorrectDataFormatDepartments" xml:space="preserve">
     <value>Неверный формат данных в столбце "Подразделения".</value>
   </data>
+  <data name="FoundCountryDuplicates" xml:space="preserve">
+    <value>Обнаружены дубли страны</value>
+  </data>
 </root>

@@ -490,7 +490,8 @@
     "InvalidDocumentFlow",
     "DocumentTypeNotFound",
     "IncorrectDataFormatRecipientLinks",
-    "IncorrectDataFormatDepartments"
+    "IncorrectDataFormatDepartments",
+    "FoundCountryDuplicates"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

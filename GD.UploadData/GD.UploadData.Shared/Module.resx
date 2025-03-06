@@ -254,4 +254,7 @@ Of them with an error: {1}</value>
   <data name="IncorrectDataFormatDepartments" xml:space="preserve">
     <value>Incorrect data format in the column "Departments".</value>
   </data>
+  <data name="FoundCountryDuplicates" xml:space="preserve">
+    <value>Country duplicates have been found</value>
+  </data>
 </root>
