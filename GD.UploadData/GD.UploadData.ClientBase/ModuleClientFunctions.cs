@@ -702,7 +702,7 @@ namespace GD.UploadData.Client
     private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
     {
       var report = Reports.GetContactsLoaderErrorReport();
-      var errorText = string.Join(";", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+      var errorText = string.Join("#", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
                                                                          x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone,
                                                                          x.Fax, x.Email, x.Homepage, x.Note, x.Error)));
       report.LoaderErrorsStructure = errorText;
@@ -844,7 +844,7 @@ namespace GD.UploadData.Client
     public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> applications)
     {
       var report = Reports.GetAssociatedApplicationLoaderErrorReport();
-      var errorText = string.Join(";", applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
+      var errorText = string.Join("#", applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
                                                                               a.Name, a.Extension, a.MonitoringType,
                                                                               a.OpenByDefaultForReading, a.Error)));
       report.LoaderErrorsStructure = errorText;
@@ -997,7 +997,7 @@ namespace GD.UploadData.Client
     public void ShowDocumentRegisterLoaderReport(List<Structures.Module.DocumentRegister> documentRegisters)
     {
       var report = Reports.GetDocumentRegisterLoaderErrorReport();
-      var errorText = string.Join(";", documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+      var errorText = string.Join("#", documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                                                                                    a.Name, a.RegisterType, a.Index,
                                                                                    a.DocumentFlow, a.NumberOfDigitsInItem,
                                                                                    a.NumberedSection, a.NumberingPeriod,
@@ -1146,7 +1146,7 @@ namespace GD.UploadData.Client
     public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
     {
       var report = Reports.GetCountriesLoaderErrorReport();
-      var errorText = string.Join(";", countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
+      var errorText = string.Join("#", countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -1216,7 +1216,7 @@ namespace GD.UploadData.Client
     public void ShowCurrenciesLoaderReport(List<Structures.Module.Currency> currencies)
     {
       var report = Reports.GetCurrenciesLoaderErrorReport();
-      var errorText = string.Join(";", currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+      var errorText = string.Join("#", currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
                                                                             a.Name, a.ShortName, a.FractionName,
                                                                             a.AlphaCode, a.NumericCode, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;

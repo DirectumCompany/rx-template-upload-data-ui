@@ -950,12 +950,10 @@ namespace GD.UploadData.Server
             record = Roles.Create();
           record.Name = role.Name;
           record.Description = role.Note;
-          
+          record.RecipientLinks.Clear();
+
           foreach (var recipient in GetRecipients(role.Recipients))
           {
-            if (record.RecipientLinks.Where(r => r.Member.Equals(recipient)).Any())
-              continue;
-            
             var employee = record.RecipientLinks.AddNew();
             employee.Member = recipient;
           }
@@ -1097,13 +1095,12 @@ namespace GD.UploadData.Server
           var responsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
           if (responsibleEmployee == null)
             throw AppliedCodeException.Create(Resources.ResponsibleNotFound);
+          record.RecipientLinks.Clear();
           record.ResponsibleEmployee = responsibleEmployee;
           SetDocumentFlow(record, registrationGroup.DocumentFlow);
           
           foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
           {
-            if (record.RecipientLinks.Where(r => r.Member.Equals(recipient)).Any())
-              continue;
             var employee = record.RecipientLinks.AddNew();
             employee.Member = recipient;
           }
@@ -1134,24 +1131,26 @@ namespace GD.UploadData.Server
     /// <param name="documentFlows">Документопотоки.</param>
     public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
     {
-      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower();
-      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
-      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
-      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
-      
       foreach (var flow in documentFlows.ToLower().Split(';'))
       {
         if (string.IsNullOrEmpty(flow))
           continue;
+        var docFlow = flow.Trim();
         
-        if (flow.Contains(inner))
+        if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+            GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower().Trim())
           record.CanRegisterInternal = true;
-        if (flow.Contains(contracts))
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower().Trim())
           record.CanRegisterContractual = true;
-        if (flow.Contains(incoming))
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower().Trim())
           record.CanRegisterIncoming = true;
-        if (flow.Contains(outgoing))
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower().Trim())
           record.CanRegisterOutgoing = true;
+        else
+          throw AppliedCodeException.Create(Resources.InvalidDocumentFlow);
       }
     }
     
@@ -1167,8 +1166,7 @@ namespace GD.UploadData.Server
       if (string.IsNullOrEmpty(name))
         return null;
       
-      return RegistrationGroups.GetAll(x => x.Name == name && x.ResponsibleEmployee.Equals(GetEmployeeRecord(responsibleEmployee)) &&
-                                       x.Index == index && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return RegistrationGroups.GetAll(x => x.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     /// <summary>
@@ -1524,10 +1522,12 @@ namespace GD.UploadData.Server
     /// <returns>Запись справочника Страна.</returns>
     public ICountry GetCountryRecord(string name, string code)
     {
-      if (string.IsNullOrEmpty(name))
+      if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(code))
         return null;
       
-      return Countries.GetAll(c => c.Name == name && c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      var country = Countries.GetAll(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return country.Code == code ?
+        country : Countries.GetAll(c => c.Code == code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion

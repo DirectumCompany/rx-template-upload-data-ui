@@ -15,7 +15,7 @@ namespace GD.UploadData
       CountriesLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.CountriesLoaderErrorReport.Country>();
-      foreach (var country in CountriesLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var country in CountriesLoaderErrorReport.LoaderErrorsStructure.Split('#'))
         tableData.Add(Structures.CountriesLoaderErrorReport.Country.Create(
           reportSessionId,
           country.Split('|')[0],

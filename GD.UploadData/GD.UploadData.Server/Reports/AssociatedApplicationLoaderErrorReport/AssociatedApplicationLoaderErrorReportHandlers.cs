@@ -15,7 +15,7 @@ namespace GD.UploadData
       AssociatedApplicationLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.AssociatedApplicationLoaderErrorReport.AssociatedApplication>();
-      foreach (var application in AssociatedApplicationLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var application in AssociatedApplicationLoaderErrorReport.LoaderErrorsStructure.Split('#'))
         tableData.Add(Structures.AssociatedApplicationLoaderErrorReport.AssociatedApplication.Create(
           reportSessionId,
           application.Split('|')[0],
