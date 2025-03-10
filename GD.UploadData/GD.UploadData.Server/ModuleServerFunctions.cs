@@ -1096,6 +1096,7 @@ namespace GD.UploadData.Server
           if (responsibleEmployee == null)
             throw AppliedCodeException.Create(Resources.ResponsibleNotFound);
           record.RecipientLinks.Clear();
+          record.Departments.Clear();
           record.ResponsibleEmployee = responsibleEmployee;
           SetDocumentFlow(record, registrationGroup.DocumentFlow);
           
@@ -1109,8 +1110,6 @@ namespace GD.UploadData.Server
           
           foreach (var department in GetDepartments(registrationGroup.Departments))
           {
-            if (record.Departments.Where(r => r.Department.Equals(department)).Any())
-              continue;
             var recordDepartment = record.Departments.AddNew();
             recordDepartment.Department = department;
           }
