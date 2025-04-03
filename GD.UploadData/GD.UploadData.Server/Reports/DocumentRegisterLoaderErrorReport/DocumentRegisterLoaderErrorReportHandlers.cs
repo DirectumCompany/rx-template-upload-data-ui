@@ -15,7 +15,7 @@ namespace GD.UploadData
       DocumentRegisterLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.DocumentRegisterLoaderErrorReport.DocumentRegister>();
-      foreach (var documentRegister in DocumentRegisterLoaderErrorReport.LoaderErrorsStructure.Split('#'))
+      foreach (var documentRegister in DocumentRegisterLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.DocumentRegisterLoaderErrorReport.DocumentRegister.Create(
           reportSessionId,
           documentRegister.Split('|')[0],

@@ -15,7 +15,7 @@ namespace GD.UploadData
       CurrenciesLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.CurrenciesLoaderErrorReport.Currency>();
-      foreach (var currency in CurrenciesLoaderErrorReport.LoaderErrorsStructure.Split('#'))
+      foreach (var currency in CurrenciesLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.CurrenciesLoaderErrorReport.Currency.Create(
           reportSessionId,
           currency.Split('|')[0],

@@ -15,7 +15,7 @@ namespace GD.UploadData
       DocumentKindsLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.DocumentKindsLoaderErrorReport.DocumentKind>();
-      foreach (var documentKind in DocumentKindsLoaderErrorReport.LoaderErrorsStructure.Split('#'))
+      foreach (var documentKind in DocumentKindsLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.DocumentKindsLoaderErrorReport.DocumentKind.Create(
           reportSessionId,
           documentKind.Split('|')[0],

@@ -15,7 +15,7 @@ namespace GD.UploadData
       ClassifierLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.ClassifierLoaderErrorReport.ClassifierBase>();
-      foreach (var classifire in ClassifierLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var classifire in ClassifierLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.ClassifierLoaderErrorReport.ClassifierBase.Create(reportSessionId,
                                                                                    classifire.Split('|')[0],
                                                                                    classifire.Split('|')[1],

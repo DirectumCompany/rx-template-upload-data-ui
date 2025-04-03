@@ -15,7 +15,7 @@ namespace GD.UploadData
       ContactsLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.ContactsLoaderErrorReport.Contact>();
-      foreach (var contact in ContactsLoaderErrorReport.LoaderErrorsStructure.Split('#'))
+      foreach (var contact in ContactsLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.ContactsLoaderErrorReport.Contact.Create(
           reportSessionId,
           contact.Split('|')[0],

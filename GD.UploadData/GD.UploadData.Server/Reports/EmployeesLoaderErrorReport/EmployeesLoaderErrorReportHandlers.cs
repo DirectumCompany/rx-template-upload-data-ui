@@ -15,7 +15,7 @@ namespace GD.UploadData
       EmployeesLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.EmployeesLoaderErrorReport.Employee>();
-      foreach (var employee in EmployeesLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var employee in EmployeesLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.EmployeesLoaderErrorReport.Employee.Create(
           reportSessionId,
           employee.Split('|')[0],

@@ -91,7 +91,7 @@ namespace GD.UploadData.Client
     private void ShowCompaniesLoaderReport(List<Structures.Module.Company> companies)
     {
       var report = Reports.GetCompaniesLoaderErrorReport();
-      var errorText = string.Join(";", companies.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
+      var errorText = string.Join(Constants.Module.Parser, companies.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
                                                                            x.Name,
                                                                            x.LegalName,
                                                                            x.HeadCompany,
@@ -194,7 +194,7 @@ namespace GD.UploadData.Client
     private void ShowPersonsLoaderReport(List<Structures.Module.Person> persons)
     {
       var report = Reports.GetPersonsLoaderErrorReport();
-      var errorText = string.Join(";", persons.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}",
+      var errorText = string.Join(Constants.Module.Parser, persons.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}",
                                                                          x.LastName,
                                                                          x.FirstName,
                                                                          x.MiddleName,
@@ -280,7 +280,7 @@ namespace GD.UploadData.Client
     private void ShowJobTitlesLoaderReport(List<Structures.Module.JobTitle> jobTitles)
     {
       var report = Reports.GetJobTitlesLoaderErrorReport();
-      var errorText = string.Join(";", jobTitles.Select(x => string.Format("{0}|{1}|{2}",
+      var errorText = string.Join(Constants.Module.Parser, jobTitles.Select(x => string.Format("{0}|{1}|{2}",
                                                                            x.Name,
                                                                            x.Department,
                                                                            x.Error)).ToArray());
@@ -368,7 +368,7 @@ namespace GD.UploadData.Client
     private void ShowBusinessUnitsLoaderReport(List<Structures.Module.BusinessUnit> businessUnits)
     {
       var report = Reports.GetBusinessUnitsLoaderErrorReport();
-      var errorText = string.Join(";", businessUnits.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
+      var errorText = string.Join(Constants.Module.Parser, businessUnits.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
                                                                                x.Name,
                                                                                x.LegalName,
                                                                                x.HeadCompany,
@@ -462,7 +462,7 @@ namespace GD.UploadData.Client
     private void ShowDepartmentsLoaderReport(List<Structures.Module.Department> departments)
     {
       var report = Reports.GetDepartmentsLoaderErrorReport();
-      var errorText = string.Join(";", departments.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+      var errorText = string.Join(Constants.Module.Parser, departments.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                                                                              x.Name,
                                                                              x.ShortName,
                                                                              x.HeadOffice,
@@ -546,7 +546,7 @@ namespace GD.UploadData.Client
     private void ShowEmployeesLoaderReport(List<Structures.Module.Employee> employees)
     {
       var report = Reports.GetEmployeesLoaderErrorReport();
-      var errorText = string.Join(";", employees.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+      var errorText = string.Join(Constants.Module.Parser, employees.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
                                                                            x.Person,
                                                                            x.Login,
                                                                            x.BusinessUnit,
@@ -623,7 +623,7 @@ namespace GD.UploadData.Client
     private void ShowLoginsLoaderReport(List<Structures.Module.Login> logins)
     {
       var report = Reports.GetLoginsLoaderErrorReport();
-      var errorText = string.Join(";", logins.Select(x => string.Format("{0}|{1}",
+      var errorText = string.Join(Constants.Module.Parser, logins.Select(x => string.Format("{0}|{1}",
                                                                         x.Name,
                                                                         x.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
@@ -647,7 +647,7 @@ namespace GD.UploadData.Client
       var contactsWithError = contacts.Where(c => !string.IsNullOrEmpty(c.Error));
       if (contactsWithError.Any())
         ShowContactsLoaderReport(contactsWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count()));
     }
     
     /// <summary>
@@ -702,7 +702,7 @@ namespace GD.UploadData.Client
     private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
     {
       var report = Reports.GetContactsLoaderErrorReport();
-      var errorText = string.Join("#", contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+      var errorText = string.Join(Constants.Module.Parser, contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
                                                                          x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone,
                                                                          x.Fax, x.Email, x.Homepage, x.Note, x.Error)));
       report.LoaderErrorsStructure = errorText;
@@ -726,7 +726,7 @@ namespace GD.UploadData.Client
       var rolesWithError = roles.Where(c => !string.IsNullOrEmpty(c.Error));
       if (rolesWithError.Any())
         ShowRolesLoaderReport(rolesWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count()));
     }
     
     /// <summary>
@@ -774,7 +774,7 @@ namespace GD.UploadData.Client
     private void ShowRolesLoaderReport(List<Structures.Module.Role> roles)
     {
       var report = Reports.GetRolesLoaderErrorReport();
-      var errorText = string.Join("#", roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, x.Recipients, x.Error)));
+      var errorText = string.Join(Constants.Module.Parser, roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, x.Recipients, x.Error)));
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -796,7 +796,7 @@ namespace GD.UploadData.Client
       var applicationsWithError = applications.Where(a => !string.IsNullOrEmpty(a.Error));
       if (applicationsWithError.Any())
         ShowAssociatedApplicationsLoaderReport(applicationsWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(applications.Count, applicationsWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(applications.Count, applicationsWithError.Count()));
     }
     
     /// <summary>
@@ -844,7 +844,7 @@ namespace GD.UploadData.Client
     public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> applications)
     {
       var report = Reports.GetAssociatedApplicationLoaderErrorReport();
-      var errorText = string.Join("#", applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
+      var errorText = string.Join(Constants.Module.Parser, applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
                                                                               a.Name, a.Extension, a.MonitoringType,
                                                                               a.OpenByDefaultForReading, a.Error)));
       report.LoaderErrorsStructure = errorText;
@@ -870,7 +870,7 @@ namespace GD.UploadData.Client
       var registrationGroupWithError = registrationGroups.Where(c => !string.IsNullOrEmpty(c.Error));
       if (registrationGroupWithError.Any())
         ShowRegistrationGroupsLoaderReport(registrationGroupWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(registrationGroups.Count, registrationGroupWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(registrationGroups.Count, registrationGroupWithError.Count()));
     }
     
     /// <summary>
@@ -920,7 +920,7 @@ namespace GD.UploadData.Client
     public void ShowRegistrationGroupsLoaderReport(List<Structures.Module.RegistrationGroup> registrationsGroups)
     {
       var report = Reports.GetRegistrationGroupLoaderErrorReport();
-      var errorText = string.Join("#", registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+      var errorText = string.Join(Constants.Module.Parser, registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
                                                                                      a.Name, a.Index, a.ResponsibleEmployee,
                                                                                      a.DocumentFlow, a.RecipientLinks,
                                                                                      a.Departments, a.Description, a.Error)).ToArray());
@@ -945,7 +945,7 @@ namespace GD.UploadData.Client
       var documentRegistersWithError = documentRegisters.Where(c => !string.IsNullOrEmpty(c.Error));
       if (documentRegistersWithError.Any())
         ShowDocumentRegisterLoaderReport(documentRegistersWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count()));
     }
     
     /// <summary>
@@ -997,7 +997,7 @@ namespace GD.UploadData.Client
     public void ShowDocumentRegisterLoaderReport(List<Structures.Module.DocumentRegister> documentRegisters)
     {
       var report = Reports.GetDocumentRegisterLoaderErrorReport();
-      var errorText = string.Join("#", documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+      var errorText = string.Join(Constants.Module.Parser, documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                                                                                    a.Name, a.RegisterType, a.Index,
                                                                                    a.DocumentFlow, a.NumberOfDigitsInItem,
                                                                                    a.NumberedSection, a.NumberingPeriod,
@@ -1023,7 +1023,7 @@ namespace GD.UploadData.Client
       var documentKindsWithError = documentKinds.Where(c => !string.IsNullOrEmpty(c.Error));
       if (documentKindsWithError.Any())
         ShowDocumentKindsLoaderReport(documentKindsWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count()));
     }
     
     /// <summary>
@@ -1075,7 +1075,7 @@ namespace GD.UploadData.Client
     public void ShowDocumentKindsLoaderReport(List<Structures.Module.DocumentKind> documentKinds)
     {
       var report = Reports.GetDocumentKindsLoaderErrorReport();
-      var errorText = string.Join("#", documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+      var errorText = string.Join(Constants.Module.Parser, documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
                                                                                a.Name, a.ShortName, a.Code,
                                                                                a.NumerationType, a.DocumentFlow,
                                                                                a.DocumentType, a.DeadlineDays,
@@ -1101,7 +1101,7 @@ namespace GD.UploadData.Client
       var countriesWithError = countries.Where(c => !string.IsNullOrEmpty(c.Error));
       if (countriesWithError.Any())
         ShowCountriesLoaderReport(countriesWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count()));
     }
     
     /// <summary>
@@ -1146,7 +1146,7 @@ namespace GD.UploadData.Client
     public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
     {
       var report = Reports.GetCountriesLoaderErrorReport();
-      var errorText = string.Join("#", countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
+      var errorText = string.Join(Constants.Module.Parser, countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
       report.Open();
     }
@@ -1168,7 +1168,7 @@ namespace GD.UploadData.Client
       var currenciesWithError = currencies.Where(c => !string.IsNullOrEmpty(c.Error));
       if (currenciesWithError.Any())
         ShowCurrenciesLoaderReport(currenciesWithError.ToList());
-      Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count()));
     }
     
     /// <summary>
@@ -1216,7 +1216,7 @@ namespace GD.UploadData.Client
     public void ShowCurrenciesLoaderReport(List<Structures.Module.Currency> currencies)
     {
       var report = Reports.GetCurrenciesLoaderErrorReport();
-      var errorText = string.Join("#", currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+      var errorText = string.Join(Constants.Module.Parser, currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
                                                                             a.Name, a.ShortName, a.FractionName,
                                                                             a.AlphaCode, a.NumericCode, a.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
@@ -1314,7 +1314,7 @@ namespace GD.UploadData.Client
     private void ShowClassifierLoaderReport(List<Structures.Module.ClassifierBase> classifiers)
     {
       var report = Reports.GetClassifierLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", classifiers.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Code, x.Name, x.FullCode, x.Error)).ToArray());
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, classifiers.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Code, x.Name, x.FullCode, x.Error)).ToArray());
       report.Open();
     }
     
@@ -1411,7 +1411,7 @@ namespace GD.UploadData.Client
     private void ShowFileRetentionPeriodLoaderReport(List<Structures.Module.FileRetentionPeriod> fileRetentionPeriods)
     {
       var report = Reports.GetFileRetentionPeriodLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", fileRetentionPeriods.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Name, x.RetentionPeriod, x.Note, x.Error)).ToArray());
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, fileRetentionPeriods.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Name, x.RetentionPeriod, x.Note, x.Error)).ToArray());
       report.Open();
     }
     
@@ -1478,7 +1478,7 @@ namespace GD.UploadData.Client
     private void ShowCaseFileLoaderReport(List<Structures.Module.CaseFile> caseFiles)
     {
       var report = Reports.GetCaseFileLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", caseFiles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, caseFiles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
                                                                                           x.Department,
                                                                                           x.RetentionPeriod,
                                                                                           x.Title,
@@ -1650,7 +1650,7 @@ namespace GD.UploadData.Client
     private void ShowCitiesLoaderReport(List<Structures.Module.City> cities)
     {
       var report = Reports.GetCitiesLoaderErrorReport();
-      var errorText = string.Join(";", cities.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, cities.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                         x.Name,
                                                                         x.ObjectGUID,
                                                                         x.TypeName,
@@ -1742,7 +1742,7 @@ namespace GD.UploadData.Client
     private void ShowMunicipalAreasLoaderReport(List<Structures.Module.MunicipalArea> municipalAreas)
     {
       var report = Reports.GetMunicipalAreasLoaderErrorReport();
-      var errorText = string.Join(";", municipalAreas.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, municipalAreas.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                                 x.Name,
                                                                                 x.ObjectGUID,
                                                                                 x.TypeName,
@@ -1833,7 +1833,7 @@ namespace GD.UploadData.Client
     private void ShowSettlementsLoaderReport(List<Structures.Module.Settlement> settlements)
     {
       var report = Reports.GetSettlementsLoaderErrorReport();
-      var errorText = string.Join(";", settlements.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, settlements.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                              x.Name,
                                                                              x.ObjectGUID,
                                                                              x.TypeName,
