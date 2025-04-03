@@ -665,7 +665,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 10)).IsEmpty())
         {
           var contact = Structures.Module.Contact.Create();
           try
@@ -814,7 +814,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 4)).IsEmpty())
         {
           var application = Structures.Module.AssociatedApplication.Create();
           try
@@ -888,7 +888,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 7)).IsEmpty())
         {
           var registrationGroup = Structures.Module.RegistrationGroup.Create();
           
@@ -963,7 +963,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 8)).IsEmpty())
         {
           var documentRegister = Structures.Module.DocumentRegister.Create();
           
@@ -977,7 +977,6 @@ namespace GD.UploadData.Client
             documentRegister.NumberedSection = range.Cell(1,6).Value.ToString()?.Trim();
             documentRegister.NumberingPeriod = range.Cell(1,7).Value.ToString()?.Trim();
             documentRegister.RegistrationGroup = range.Cell(1,8).Value.ToString()?.Trim();
-            documentRegister.Error = range.Cell(1,9).Value.ToString()?.Trim();
           }
           catch (Exception ex)
           {
@@ -1041,7 +1040,7 @@ namespace GD.UploadData.Client
         
         IXLRange range;
         var currentRow = 2;
-        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 9)).IsEmpty())
         {
           var documentKind = Structures.Module.DocumentKind.Create();
           
