@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -15,7 +15,7 @@ namespace GD.UploadData
       MunicipalAreasLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.MunicipalAreasLoaderErrorReport.MunicipalArea>();
-      foreach (var municipalArea in MunicipalAreasLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var municipalArea in MunicipalAreasLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.MunicipalAreasLoaderErrorReport.MunicipalArea.Create(
           reportSessionId,
           municipalArea.Split('|')[0],

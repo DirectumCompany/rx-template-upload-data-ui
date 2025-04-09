@@ -197,4 +197,64 @@ Of them with an error: {1}</value>
   <data name="LoadMunicipalAreas" xml:space="preserve">
     <value>Load municipal areas</value>
   </data>
+  <data name="LoadContacts" xml:space="preserve">
+    <value>Load contacts</value>
+  </data>
+  <data name="LoadRoles" xml:space="preserve">
+    <value>Load roles</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="LoadAssociatedApplications" xml:space="preserve">
+    <value>Load associated applications</value>
+  </data>
+  <data name="LoadDocumentRegister" xml:space="preserve">
+    <value>Load document register</value>
+  </data>
+  <data name="LoadRegistrationGroup" xml:space="preserve">
+    <value>Load registration group</value>
+  </data>
+  <data name="LoadCurrencies" xml:space="preserve">
+    <value>Load currencies</value>
+  </data>
+  <data name="LoadCountries" xml:space="preserve">
+    <value>Load countries</value>
+  </data>
+  <data name="LoadDocumentKinds" xml:space="preserve">
+    <value>Load document kinds</value>
+  </data>
+  <data name="InvalidDocumentType" xml:space="preserve">
+    <value>The document type does not belong to the selected document flow.</value>
+  </data>
+  <data name="IncorrectDataFormatDeadlineInDays" xml:space="preserve">
+    <value>Incorrect data format in the column "Deadline in days"</value>
+  </data>
+  <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
+    <value>Incorrect data format in the column "Deadline in hours"</value>
+  </data>
+  <data name="IncorrectFormatNumberingDigitsInNumber" xml:space="preserve">
+    <value>Incorrect format of the "Number of digits in number"</value>
+  </data>
+  <data name="RecipientNotFound" xml:space="preserve">
+    <value>No subject by that name was found: {0}</value>
+  </data>
+  <data name="ResponsibleNotFound" xml:space="preserve">
+    <value>Responsible not found</value>
+  </data>
+  <data name="InvalidDocumentFlow" xml:space="preserve">
+    <value>The document flow not found.</value>
+  </data>
+  <data name="DocumentTypeNotFound" xml:space="preserve">
+    <value>Document type not found</value>
+  </data>
+  <data name="IncorrectDataFormatRecipientLinks" xml:space="preserve">
+    <value>Incorrect data format in the column "Recipients".</value>
+  </data>
+  <data name="IncorrectDataFormatDepartments" xml:space="preserve">
+    <value>Incorrect data format in the column "Departments".</value>
+  </data>
+  <data name="FoundCountryDuplicates" xml:space="preserve">
+    <value>Country duplicates have been found</value>
+  </data>
 </root>

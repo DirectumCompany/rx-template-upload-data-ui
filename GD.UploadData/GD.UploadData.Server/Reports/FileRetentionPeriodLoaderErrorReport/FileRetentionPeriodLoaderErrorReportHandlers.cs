@@ -15,7 +15,7 @@ namespace GD.UploadData
       FileRetentionPeriodLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.FileRetentionPeriodLoaderErrorReport.FileRetentionPeriod>();
-      foreach (var classifire in FileRetentionPeriodLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var classifire in FileRetentionPeriodLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.FileRetentionPeriodLoaderErrorReport.FileRetentionPeriod.Create(reportSessionId,
                                                                                    classifire.Split('|')[0],
                                                                                    classifire.Split('|')[1],

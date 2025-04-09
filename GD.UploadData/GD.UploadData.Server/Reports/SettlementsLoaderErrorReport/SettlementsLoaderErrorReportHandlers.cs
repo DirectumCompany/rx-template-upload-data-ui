@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -15,7 +15,7 @@ namespace GD.UploadData
       SettlementsLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.SettlementsLoaderErrorReport.Settlement>();
-      foreach (var settlement in SettlementsLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var settlement in SettlementsLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.SettlementsLoaderErrorReport.Settlement.Create(
           reportSessionId,
           settlement.Split('|')[0],

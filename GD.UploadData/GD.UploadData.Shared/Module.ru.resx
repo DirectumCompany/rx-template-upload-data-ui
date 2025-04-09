@@ -197,4 +197,64 @@
   <data name="LoadMunicipalAreas" xml:space="preserve">
     <value>Загрузить муниципальные районы</value>
   </data>
+  <data name="LoadContacts" xml:space="preserve">
+    <value>Загрузить контакты</value>
+  </data>
+  <data name="LoadRoles" xml:space="preserve">
+    <value>Загрузить роли</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="LoadAssociatedApplications" xml:space="preserve">
+    <value>Загрузить приложения-обработчики</value>
+  </data>
+  <data name="LoadDocumentRegister" xml:space="preserve">
+    <value>Загрузить журнал регистрации</value>
+  </data>
+  <data name="LoadRegistrationGroup" xml:space="preserve">
+    <value>Загрузить группы регистрации</value>
+  </data>
+  <data name="LoadCurrencies" xml:space="preserve">
+    <value>Загрузить валюты</value>
+  </data>
+  <data name="LoadCountries" xml:space="preserve">
+    <value>Загрузить страны</value>
+  </data>
+  <data name="LoadDocumentKinds" xml:space="preserve">
+    <value>Загрузить виды документов</value>
+  </data>
+  <data name="InvalidDocumentType" xml:space="preserve">
+    <value>Тип документа не принадлежит выбранному документопотоку.</value>
+  </data>
+  <data name="IncorrectDataFormatDeadlineInDays" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Рассмотрение дней"</value>
+  </data>
+  <data name="IncorrectDataFromatDeadlineInHours" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Рассмотрение часов"</value>
+  </data>
+  <data name="IncorrectFormatNumberingDigitsInNumber" xml:space="preserve">
+    <value>Неверный формат свойства "Кол-во цифр в номере"</value>
+  </data>
+  <data name="RecipientNotFound" xml:space="preserve">
+    <value>Субъект с таким именем не найден: {0}</value>
+  </data>
+  <data name="ResponsibleNotFound" xml:space="preserve">
+    <value>Не найден ответственный</value>
+  </data>
+  <data name="InvalidDocumentFlow" xml:space="preserve">
+    <value>Не найден документопоток</value>
+  </data>
+  <data name="DocumentTypeNotFound" xml:space="preserve">
+    <value>Не найден тип документа</value>
+  </data>
+  <data name="IncorrectDataFormatRecipientLinks" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Участники".</value>
+  </data>
+  <data name="IncorrectDataFormatDepartments" xml:space="preserve">
+    <value>Неверный формат данных в столбце "Подразделения".</value>
+  </data>
+  <data name="FoundCountryDuplicates" xml:space="preserve">
+    <value>Обнаружены дубли страны</value>
+  </data>
 </root>

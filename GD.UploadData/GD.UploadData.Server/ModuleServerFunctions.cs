@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -816,6 +816,7 @@ namespace GD.UploadData.Server
     {
       if (string.IsNullOrEmpty(name))
         return null;
+      
       return Employees.GetAll(x => x.Person.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
@@ -874,6 +875,706 @@ namespace GD.UploadData.Server
       
       return Logins.GetAll(x => x.LoginName == name &&
                            x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Контакты
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Контактное лицо.
+    /// </summary>
+    /// <param name="contacts">Список контактных лиц.</param>
+    /// <returns>Список контактных лиц.</returns>
+    [Remote]
+    public List<Structures.Module.Contact> CreateOrUpdateContacts(List<Structures.Module.Contact> contacts)
+    {
+      foreach (var contact in contacts.Where(x => string.IsNullOrEmpty(x.Error)))
+      {
+        try
+        {
+          var record = GetContact(contact);
+          if (record == null)
+            record = Contacts.Create();
+          record.Name = contact.FullName.Trim();
+          if (!string.IsNullOrEmpty(contact.Company))
+            record.Company = GetCompanyRecord(contact.Company);
+          record.JobTitle = contact.JobTitle;
+          record.Phone = contact.Phone;
+          record.Fax = contact.Fax;
+          record.Email = contact.Email;
+          record.Homepage = contact.Homepage;
+          record.Note = contact.Note;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          contact.Error = ex.Message;
+        }
+      }
+      return contacts;
+    }
+    
+    
+    /// <summary>
+    /// Получить контактное лицо.
+    /// </summary>
+    /// <param name="contact"></param>
+    /// <returns></returns>
+    public IContact GetContact(Structures.Module.Contact contact)
+    {
+      if (string.IsNullOrEmpty(contact.FullName) || string.IsNullOrEmpty(contact.Company))
+        return null;
+      
+      return Contacts.GetAll(c => c.Name == contact.FullName && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Роли
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Роль.
+    /// </summary>
+    /// <param name="roles">Список ролей.</param>
+    /// <returns>Список ролей.</returns>
+    [Remote]
+    public List<Structures.Module.Role> CreateOrUpdateRoles(List<Structures.Module.Role> roles)
+    {
+      foreach (var role in roles.Where(x => string.IsNullOrEmpty(x.Error)))
+      {
+        try
+        {
+          var record = GetRole(role);
+          if (record == null)
+            record = Roles.Create();
+          record.Name = role.Name;
+          record.Description = role.Note;
+          record.RecipientLinks.Clear();
+
+          foreach (var recipient in GetRecipients(role.Recipients))
+          {
+            var employee = record.RecipientLinks.AddNew();
+            employee.Member = recipient;
+          }
+          
+          record.IsSingleUser = role.IsSingleUser == Resources.Yes ? true : false;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          role.Error = ex.Message;
+        }
+      }
+      return roles;
+    }
+    
+    /// <summary>
+    /// Получить субъект прав доступа.
+    /// </summary>
+    /// <param name="recipient">Название субъекта прав.</param>
+    /// <returns>Запись справочника субъекта прав.</returns>
+    public IRecipient GetRecipient(string recipient)
+    {
+      if (string.IsNullOrEmpty(recipient))
+        return null;
+      var recipientsall = Recipients.GetAll().ToList();
+      var existingRecipient = Recipients.GetAll(r => r.Name == recipient && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      if (existingRecipient == null)
+        throw AppliedCodeException.Create(Resources.RecipientNotFoundFormat(recipient));
+      
+      return existingRecipient;
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Роль.
+    /// </summary>
+    /// <param name="role">Название роли.</param>
+    /// <returns>Запись справочника Роль.</returns>
+    public IRole GetRole(Structures.Module.Role role)
+    {
+      if (string.IsNullOrEmpty(role.Name))
+        return null;
+      
+      return Roles.GetAll(r => r.Name == role.Name && r.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Приложения обработчики
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Приложение-обработчик.
+    /// </summary>
+    /// <param name="applications">Список обработчиков приложений.</param>
+    /// <returns>Список обработчиков приложений.</returns>
+    [Remote]
+    public List<Structures.Module.AssociatedApplication> CreateOrUpdateAssociatedApplications(List<Structures.Module.AssociatedApplication> applications)
+    {
+      foreach (var application in applications.Where(a => string.IsNullOrEmpty(a.Error)))
+      {
+        try
+        {
+          var record = GetApplication(application.Name);
+          if (record == null)
+            record = Sungero.Content.AssociatedApplications.Create();
+          record.Name = application.Name;
+          record.Extension = application.Extension;
+          record.MonitoringType = GetMonitoringType(application.MonitoringType);
+          record.OpenByDefaultForReading = application.OpenByDefaultForReading == "Да";
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          application.Error = ex.Message;
+        }
+      }
+      return applications;
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Приложение-обработчик.
+    /// </summary>
+    /// <param name="application">Название записи справочника.</param>
+    /// <returns>Запись справочника Приложение-обработчик.</returns>
+    public Sungero.Content.IAssociatedApplication GetApplication(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+
+      return Sungero.Content.AssociatedApplications.GetAll(a => a.Status == Sungero.CoreEntities.DatabookEntry.Status.Active &&
+                                                           a.Name == name).FirstOrDefault();
+    }
+    
+    /// <summary>
+    /// Получить локализованное значение типа отслеживания закрытия.
+    /// </summary>
+    /// <param name="monitoringType">Название типа отслеживания закрытия</param>
+    /// <returns>Локализованное значение типа отслеживания закрытия.</returns>
+    public Sungero.Core.Enumeration? GetMonitoringType(string monitoringType)
+    {
+      monitoringType = monitoringType.ToLower();
+      var byProcessAndWindow = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow).ToLower();
+      var manual = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Manual).ToLower();
+      var process = Sungero.Content.AssociatedApplications.Info.Properties.MonitoringType.
+        GetLocalizedValue(Sungero.Content.AssociatedApplication.MonitoringType.Process).ToLower();
+      
+      if (monitoringType == byProcessAndWindow)
+        return Sungero.Content.AssociatedApplication.MonitoringType.ByProcessAndWindow;
+      if (monitoringType == manual)
+        return Sungero.Content.AssociatedApplication.MonitoringType.Manual;
+      if (monitoringType == process)
+        return Sungero.Content.AssociatedApplication.MonitoringType.Process;
+      
+      return null;
+    }
+    
+    #endregion
+    
+    #region Группа регистрации
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Группа регистрации.
+    /// </summary>
+    /// <param name="registrationGroups">Список групп регистрации.</param>
+    /// <returns>Список групп регистрации.</returns>
+    [Remote]
+    public List<Structures.Module.RegistrationGroup> CreateOrUpdateRegistrationGroup(List<Structures.Module.RegistrationGroup> registrationGroups)
+    {
+      foreach (var registrationGroup in registrationGroups.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetRegistrationGroup(registrationGroup.Name, registrationGroup.ResponsibleEmployee, registrationGroup.Index);
+          if (record == null)
+            record = RegistrationGroups.Create();
+          record.Name = registrationGroup.Name;
+          record.Index = registrationGroup.Index;
+          var responsibleEmployee = GetEmployeeRecord(registrationGroup.ResponsibleEmployee);
+          if (responsibleEmployee == null)
+            throw AppliedCodeException.Create(Resources.ResponsibleNotFound);
+          record.RecipientLinks.Clear();
+          record.Departments.Clear();
+          record.ResponsibleEmployee = responsibleEmployee;
+          SetDocumentFlow(record, registrationGroup.DocumentFlow);
+          
+          foreach (var recipient in GetRecipients(registrationGroup.RecipientLinks))
+          {
+            if (record.RecipientLinks.Any(r => r.Member.Equals(recipient)))
+              continue;
+            var employee = record.RecipientLinks.AddNew();
+            employee.Member = recipient;
+          }
+          
+          foreach (var department in GetDepartments(registrationGroup.Departments))
+          {
+            var recordDepartment = record.Departments.AddNew();
+            recordDepartment.Department = department;
+          }
+          
+          record.Description = registrationGroup.Description;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          registrationGroup.Error = ex.Message;
+        }
+      }
+      return registrationGroups;
+    }
+    
+    /// <summary>
+    /// Установить значение регистрируемых докуметопотоков.
+    /// </summary>
+    /// <param name="record">Группа регистрации.</param>
+    /// <param name="documentFlows">Документопотоки.</param>
+    public void SetDocumentFlow(IRegistrationGroup record, string documentFlows)
+    {
+      record.CanRegisterInternal = false;
+      record.CanRegisterContractual = false;
+      record.CanRegisterIncoming = false;
+      record.CanRegisterOutgoing = false;
+      foreach (var flow in documentFlows.ToLower().Split(';'))
+      {
+        if (string.IsNullOrEmpty(flow))
+          continue;
+        var docFlow = flow.Trim();
+        
+        if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+            GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower().Trim())
+          record.CanRegisterInternal = true;
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower().Trim())
+          record.CanRegisterContractual = true;
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower().Trim())
+          record.CanRegisterIncoming = true;
+        else if (docFlow == DocumentRegisters.Info.Properties.DocumentFlow.
+                 GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower().Trim())
+          record.CanRegisterOutgoing = true;
+        else
+          throw AppliedCodeException.Create(Resources.InvalidDocumentFlow);
+      }
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Группа регистрации.
+    /// </summary>
+    /// <param name="name">Название группы регистрации.</param>
+    /// <param name="responsibleEmployee">Ответственный за группу регистрации.</param>
+    /// <param name="index">Индекс группы регистрации.</param>
+    /// <returns>Запись справочника группы регистрации.</returns>
+    public IRegistrationGroup GetRegistrationGroup(string name, string responsibleEmployee, string index)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return RegistrationGroups.GetAll(x => x.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Группа регистрации.
+    /// </summary>
+    /// <param name="name">Название группы регистрации.</param>
+    /// <returns>Запись справочника группы регистрации.</returns>
+    public IRegistrationGroup GetRegistrationGroup(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return RegistrationGroups.GetAll(x => x.Name == name && x.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    /// <summary>
+    /// Получить список участников группы регистрации.
+    /// </summary>
+    /// <param name="recipientNames">Название группы.</param>
+    /// <returns>Список участников группы регистрации.</returns>
+    public List<IRecipient> GetRecipients(string recipientNames)
+    {
+      var recipients = new List<IRecipient>();
+      foreach (var recipient in recipientNames.Split(';'))
+      {
+        if (string.IsNullOrEmpty(recipient))
+          continue;
+        
+        var rec = GetRecipient(recipient.Trim());
+        if (rec == null)
+          continue;
+        
+        recipients.Add(rec);
+      }
+      
+      return recipients;
+    }
+    
+    /// <summary>
+    /// Получить список Подразделений.
+    /// </summary>
+    /// <param name="departmentNames">Название подразделения.</param>
+    /// <returns>Список подразделений.</returns>
+    public List<IDepartment> GetDepartments(string departmentNames)
+    {
+      var departments = new List<IDepartment>();
+      foreach (var department in departmentNames.Split(';'))
+      {
+        if (string.IsNullOrEmpty(department))
+          continue;
+        
+        departments.Add(GetDepartmentRecord(department.Trim()));
+      }
+      return departments;
+    }
+    
+    #endregion
+    
+    #region  Журналы регистраций
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Журнал регистрации.
+    /// </summary>
+    /// <param name="documentRegisters">Список журналов регистрации.</param>
+    /// <returns>Список журналов регистрации.</returns>
+    [Remote]
+    public List<Structures.Module.DocumentRegister> CreateorUpdateDocumentRegister(List<Structures.Module.DocumentRegister> documentRegisters)
+    {
+      foreach (var documentRegister in documentRegisters.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetDocumentRegisterRecord(documentRegister);
+          if (record == null)
+            record = DocumentRegisters.Create();
+          record.Name = documentRegister.Name;
+          record.RegisterType = GetRegisterType(documentRegister.RegisterType);
+          record.Index = documentRegister.Index;
+          record.DocumentFlow = GetDocumentFlow(documentRegister.DocumentFlow);
+          var numberOfDigitsInNumber = 0;
+          if (!int.TryParse(documentRegister.NumberOfDigitsInItem, out numberOfDigitsInNumber))
+            throw AppliedCodeException.Create(Resources.IncorrectFormatNumberingDigitsInNumber);
+          record.NumberOfDigitsInNumber = numberOfDigitsInNumber;
+          record.NumberingSection = GetNumberingSection(documentRegister.NumberedSection);
+          record.NumberingPeriod = GetNumberingPeriod(documentRegister.NumberingPeriod);
+          if (record.RegisterType.Value.Value != DocumentRegisters.Info.Properties.RegisterType.
+              GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering))
+            record.RegistrationGroup = GetRegistrationGroup(documentRegister.RegistrationGroup);
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          documentRegister.Error = ex.Message;
+        }
+      }
+      return documentRegisters;
+    }
+    
+    /// <summary>
+    /// Получить Разрез нумерации.
+    /// </summary>
+    /// <param name="section">Название разреза нумерации.</param>
+    /// <returns>Локализованное значение разреза нумераци.</returns>
+    public Enumeration? GetNumberingSection(string section)
+    {
+      section = section.ToLower();
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit)
+          .ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingSection.BusinessUnit;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.Department)
+          .ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingSection.Department;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument)
+          .ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingSection.LeadingDocument;
+      if (section == DocumentRegisters.Info.Properties.NumberingSection.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingSection.NoSection)
+          .ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingSection.NoSection;
+      
+      return null;
+    }
+    
+    /// <summary>
+    /// Получить Период нумерации.
+    /// </summary>
+    /// <param name="period">Название периода нумераци.</param>
+    /// <returns>Локализованное значение периода нумераци.</returns>
+    public Enumeration? GetNumberingPeriod(string period)
+    {
+      period = period.ToLower();
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous).ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Continuous;
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Day).ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Day;
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Month).ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Month;
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter).ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Quarter;
+      if (period == DocumentRegisters.Info.Properties.NumberingPeriod.GetLocalizedValue(Sungero.Docflow.DocumentRegister.NumberingPeriod.Year).ToLower())
+        return Sungero.Docflow.DocumentRegister.NumberingPeriod.Year;
+      
+      return null;
+    }
+    
+    /// <summary>
+    /// Получить локализованное значение документопотока.
+    /// </summary>
+    /// <param name="name">Название документопотока.</param>
+    /// <returns>Локализованное значение документопотока.</returns>
+    public Enumeration? GetDocumentFlow(string name)
+    {
+      name = name.ToLower();
+      var inner = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Inner).ToLower();
+      var contracts = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts).ToLower();
+      var incoming = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming).ToLower();
+      var outgoing = DocumentRegisters.Info.Properties.DocumentFlow.GetLocalizedValue(Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing).ToLower();
+      
+      if (name == inner)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Inner;
+      if (name == contracts)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Contracts;
+      if (name == incoming)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Incoming;
+      if (name == outgoing)
+        return Sungero.Docflow.DocumentRegister.DocumentFlow.Outgoing;
+      
+      return null;
+    }
+    
+    /// <summary>
+    /// Получить локализованное значение типа журнала.
+    /// </summary>
+    /// <param name="type">Название журнала.</param>
+    /// <returns>Локализованное значение типа журнала.</returns>
+    public Enumeration? GetRegisterType(string type)
+    {
+      type = type.ToLower();
+      var registration = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Registration).ToLower();
+      var numbering = DocumentRegisters.Info.Properties.RegisterType.GetLocalizedValue(Sungero.Docflow.DocumentRegister.RegisterType.Numbering).ToLower();
+      
+      if (type == numbering)
+        return Sungero.Docflow.DocumentRegister.RegisterType.Numbering;
+      
+      if (type == registration)
+        return Sungero.Docflow.DocumentRegister.RegisterType.Registration;
+      
+      return null;
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Журнал регистрации.
+    /// </summary>
+    /// <param name="documentRegister">Журнал регистрации.</param>
+    /// <returns>Запись справочника Журнал регистрации.</returns>
+    public IDocumentRegister GetDocumentRegisterRecord(Structures.Module.DocumentRegister documentRegister)
+    {
+      if (string.IsNullOrEmpty(documentRegister.Name))
+        return null;
+      
+      return DocumentRegisters.GetAll(d => d.Name == documentRegister.Name &&
+                                      d.Index == documentRegister.Index &&
+                                      d.RegistrationGroup == GetRegistrationGroup(documentRegister.RegistrationGroup) &&
+                                      d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Виды документов
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Вид документа.
+    /// </summary>
+    /// <param name="documentKinds">Список видов документов.</param>
+    /// <returns>Список видов документов.</returns>
+    [Remote]
+    public List<Structures.Module.DocumentKind> CreateOrUpdateDocumentKinds(List<Structures.Module.DocumentKind> documentKinds)
+    {
+      foreach (var documentKind in documentKinds.Where(r => string.IsNullOrEmpty(r.Error)))
+      {
+        try
+        {
+          var record = GetDocumentKindRecord(documentKind.Name);
+          if (record == null)
+            record = DocumentKinds.Create();
+          record.Name = documentKind.Name;
+          record.ShortName = documentKind.ShortName;
+          record.Code = documentKind.Code;
+          
+          var documentFlow = GetDocumentFlow(documentKind.DocumentFlow);
+          if (documentFlow == null)
+            throw AppliedCodeException.Create(Resources.InvalidDocumentFlow);
+          record.DocumentFlow = documentFlow;
+          
+          var documentType = GetDocumentType(documentKind.DocumentType, documentKind.DocumentFlow);
+          if (documentType == null)
+            throw AppliedCodeException.Create(Resources.DocumentTypeNotFound);
+          record.DocumentType = documentType;
+          
+          if (record.DocumentType.DocumentFlow != record.DocumentFlow)
+            throw AppliedCodeException.Create(Resources.InvalidDocumentType);
+          
+          if (!string.IsNullOrEmpty(documentKind.NumerationType))
+            record.NumberingType = GetNumberingType(documentKind.NumerationType);
+          
+          var deadline = 0;
+          if (!string.IsNullOrEmpty(documentKind.DeadlineDays))
+          {
+            if (!int.TryParse(documentKind.DeadlineDays, out deadline))
+              throw AppliedCodeException.Create(Resources.IncorrectDataFormatDeadlineInDays);
+            record.DeadlineInDays = deadline;
+          }
+          if (!string.IsNullOrEmpty(documentKind.DeadlineHours))
+          {
+            if (!int.TryParse(documentKind.DeadlineHours, out deadline))
+              throw AppliedCodeException.Create(Resources.IncorrectDataFromatDeadlineInHours);
+            record.DeadlineInHours = deadline;
+          }
+          
+          record.Note = documentKind.Note;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          documentKind.Error = ex.Message;
+        }
+      }
+      return documentKinds;
+    }
+    
+    /// <summary>
+    /// Получить Тип нумерации.
+    /// </summary>
+    /// <param name="numberingType">Название типа нумерации.</param>
+    /// <returns>Локализованное значание типа нумерации.</returns>
+    public Enumeration? GetNumberingType(string numberingType)
+    {
+      numberingType = numberingType.ToLower();
+      var numerable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.Numerable).ToLower();
+      var notNumerable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.NotNumerable).ToLower();
+      var registrable = DocumentKinds.Info.Properties.NumberingType.GetLocalizedValue(Sungero.Docflow.DocumentKind.NumberingType.Registrable).ToLower();
+      
+      if (numberingType == numerable)
+        return Sungero.Docflow.DocumentKind.NumberingType.Numerable;
+      if (numberingType == notNumerable)
+        return Sungero.Docflow.DocumentKind.NumberingType.NotNumerable;
+      if (numberingType == registrable)
+        return Sungero.Docflow.DocumentKind.NumberingType.Registrable;
+      
+      return null;
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Тип документа.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Тип документа.</returns>
+    public IDocumentType GetDocumentType(string name, string documentFlow)
+    {
+      if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(documentFlow))
+        return null;
+      
+      return DocumentTypes.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    /// <summary>
+    /// Получить запись справочника Вид документа.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Вид документа.</returns>
+    public IDocumentKind GetDocumentKindRecord(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      
+      return DocumentKinds.GetAll(d => d.Name == name && d.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+    }
+    
+    #endregion
+    
+    #region Страны
+    
+    /// <summary>
+    /// Создать или обновить записи справочника Страна.
+    /// </summary>
+    /// <param name="countries">Список стран.</param>
+    /// <returns>Список стран.</returns>
+    [Remote]
+    public List<Structures.Module.Country> CreateOrUpdateCountries(List<Structures.Module.Country> countries)
+    {
+      foreach (var country in countries.Where(c => string.IsNullOrEmpty(c.Error)))
+      {
+        try
+        {
+          var record = Countries.GetAll(c => c.Name == country.Name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+          if (record == null)
+          {
+            record = Countries.GetAll(c => c.Code == country.Code && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+            if (record == null)
+              record = Countries.Create();
+            else
+              throw AppliedCodeException.Create(Resources.FoundCountryDuplicates);
+          }
+          
+          record.Name = country.Name;
+          record.Code = country.Code;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          country.Error = ex.Message;
+        }
+      }
+      
+      return countries;
+    }
+    
+    #endregion
+    
+    #region Валюты
+    
+    /// <summary>
+    /// Создать или обновить валюты.
+    /// </summary>
+    /// <param name="currencies">Список валют.</param>
+    /// <returns>Список валют.</returns>
+    [Remote]
+    public List<Structures.Module.Currency> CreateOrUpdateCurrencies(List<Structures.Module.Currency> currencies)
+    {
+      foreach (var currency in currencies.Where(c => string.IsNullOrEmpty(c.Error)))
+      {
+        try
+        {
+          var record = GetCurrency(currency.Name);
+          if (record == null)
+            record = Currencies.Create();
+          record.Name = currency.Name;
+          record.ShortName = currency.ShortName;
+          record.FractionName = currency.FractionName;
+          record.AlphaCode = currency.AlphaCode;
+          record.NumericCode = currency.NumericCode;
+          record.Status = Sungero.Commons.Currency.Status.Active;
+          record.Save();
+        }
+        catch (Exception ex)
+        {
+          currency.Error = ex.Message;
+        }
+      }
+      return currencies;
+    }
+    
+    /// <summary>
+    /// Получить валюту.
+    /// </summary>
+    /// <param name="name">Название.</param>
+    /// <returns>Запись справочника Валюта.</returns>
+    public ICurrency GetCurrency(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return null;
+      var abc = Currencies.GetAll().ToList();
+      var q = abc.Where(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
+      return abc.Where(c => c.Name == name && c.Status == Sungero.CoreEntities.DatabookEntry.Status.Active).FirstOrDefault();
     }
     
     #endregion

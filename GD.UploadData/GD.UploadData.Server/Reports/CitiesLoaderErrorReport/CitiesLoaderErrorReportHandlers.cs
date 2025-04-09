@@ -15,7 +15,7 @@ namespace GD.UploadData
       CitiesLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.CitiesLoaderErrorReport.City>();
-      foreach (var city in CitiesLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var city in CitiesLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.CitiesLoaderErrorReport.City.Create(
           reportSessionId,
           city.Split('|')[0],

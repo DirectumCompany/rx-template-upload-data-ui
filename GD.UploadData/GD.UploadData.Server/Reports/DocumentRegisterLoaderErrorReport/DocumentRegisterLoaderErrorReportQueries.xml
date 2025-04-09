@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<queries>
+  <query key="SelectFromTempTable">
+    <mssql><![CDATA[select *
+from Settings_Reports_DocumentRegisterLoaderError
+where ReportSessionId = @ReportSessionId]]></mssql>
+    <postgres><![CDATA[select *
+from Settings_Reports_DocumentRegisterLoaderError
+where ReportSessionId = @ReportSessionId]]></postgres>
+  </query>
+  <query key="CreateSourceTable">
+    <mssql><![CDATA[create table {0}
+([ReportSessionId] varchar(256) NOT NULL,
+ [Name] nvarchar(max) NULL,
+ [RegisterType] nvarchar(max) NULL,
+ [RegistrationGroup] nvarchar(max) NULL,
+ [Index] nvarchar(max) NULL,
+ [DocumentFlow] nvarchar(max) NULL,
+ [NumberOfDigitsInItem] nvarchar(max) NULL,
+ [NumberingPeriod] nvarchar(max) NULL,
+ [NumberedSection] nvarchar(max) NULL,
+ [Error] nvarchar(max) NULL)]]></mssql>
+    <postgres><![CDATA[create table {0}
+(ReportSessionId citext NOT NULL,
+ Name citext NULL,
+ RegisterType citext NULL,
+ RegistrationGroup citext NULL,
+ Index citext NULL,
+ DocumentFlow citext NULL,
+ NumberOfDigitsInItem citext NULL,
+ NumberingPeriod citext NULL,
+ NumberedSection citext NULL,
+ Error citext NULL)]]></postgres>
+  </query>
+</queries>

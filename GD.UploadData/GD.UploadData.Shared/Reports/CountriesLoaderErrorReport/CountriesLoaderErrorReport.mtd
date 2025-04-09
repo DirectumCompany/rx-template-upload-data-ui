@@ -1,0 +1,43 @@
+{
+  "$type": "Sungero.Metadata.ReportMetadata, Sungero.Reporting.Shared",
+  "NameGuid": "106012e4-c614-4189-95d6-f5665f309db0",
+  "Name": "CountriesLoaderErrorReport",
+  "AssociatedGuid": "5a9fb16f-f1a3-4965-8492-5a853351161b",
+  "BaseGuid": "cef9a810-3f30-4eca-9fe3-30992af0b818",
+  "DataSources": [],
+  "DefaultExportFormat": "Excel",
+  "ExportFormats": [
+    "Excel"
+  ],
+  "HandledEvents": [
+    "AfterExecuteServer",
+    "BeforeExecuteServer"
+  ],
+  "IconResourcesKeys": [],
+  "IntegrationServiceName": "EmployeesLoaderErrorReport",
+  "Overridden": [
+    "PublicConstants",
+    "PublicStructures",
+    "ExportFormats",
+    "DefaultExportFormat",
+    "DisplayName",
+    "Description",
+    "HandledEvents",
+    "Parameters"
+  ],
+  "Parameters": [
+    {
+      "NameGuid": "f0961987-9b8d-4cb4-b543-344aca62b6a6",
+      "Name": "ReportSessionId",
+      "InternalDataTypeName": "System.String"
+    },
+    {
+      "NameGuid": "e5f8be5a-32fe-4f8e-953f-d3b7469e1958",
+      "Name": "LoaderErrorsStructure",
+      "InternalDataTypeName": "System.String"
+    }
+  ],
+  "PublicStructures": [],
+  "ResourcesKeys": [],
+  "Versions": []
+}

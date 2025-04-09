@@ -286,6 +286,38 @@
     {
       "ItemId": "4a88fab9-390b-4485-af4d-38b6cced8142",
       "PreviousItemId": "30ca125d-627b-4b65-8a83-5a8efa72bc5c"
+    },
+    {
+      "ItemId": "d44f8b28-b57d-4366-ab94-46b861d67c05",
+      "PreviousItemId": "4a88fab9-390b-4485-af4d-38b6cced8142"
+    },
+    {
+      "ItemId": "d126799c-572f-4a44-be41-a48f9b77ab94",
+      "PreviousItemId": "d44f8b28-b57d-4366-ab94-46b861d67c05"
+    },
+    {
+      "ItemId": "2397937d-049f-4d1d-a164-a84ad404d3f3",
+      "PreviousItemId": "d126799c-572f-4a44-be41-a48f9b77ab94"
+    },
+    {
+      "ItemId": "073fc4c5-8f2d-4676-bce7-a1c34bbe4a49",
+      "PreviousItemId": "2397937d-049f-4d1d-a164-a84ad404d3f3"
+    },
+    {
+      "ItemId": "53854112-895e-4fff-b161-c366b87073b9",
+      "PreviousItemId": "073fc4c5-8f2d-4676-bce7-a1c34bbe4a49"
+    },
+    {
+      "ItemId": "a4687ae8-e2c5-4cd1-a50f-fcedd8da9f3f",
+      "PreviousItemId": "53854112-895e-4fff-b161-c366b87073b9"
+    },
+    {
+      "ItemId": "106012e4-c614-4189-95d6-f5665f309db0",
+      "PreviousItemId": "a4687ae8-e2c5-4cd1-a50f-fcedd8da9f3f"
+    },
+    {
+      "ItemId": "36f02f45-0d86-4178-834e-7453dbb2f91f",
+      "PreviousItemId": "106012e4-c614-4189-95d6-f5665f309db0"
     }
   ],
   "HandledEvents": [
@@ -439,7 +471,27 @@
     "Region",
     "LoadMunArea",
     "LoadSettlements",
-    "LoadMunicipalAreas"
+    "LoadMunicipalAreas",
+    "LoadContacts",
+    "LoadRoles",
+    "Yes",
+    "LoadAssociatedApplications",
+    "LoadDocumentRegister",
+    "LoadRegistrationGroup",
+    "LoadCurrencies",
+    "LoadCountries",
+    "LoadDocumentKinds",
+    "InvalidDocumentType",
+    "IncorrectDataFormatDeadlineInDays",
+    "IncorrectDataFromatDeadlineInHours",
+    "IncorrectFormatNumberingDigitsInNumber",
+    "RecipientNotFound",
+    "ResponsibleNotFound",
+    "InvalidDocumentFlow",
+    "DocumentTypeNotFound",
+    "IncorrectDataFormatRecipientLinks",
+    "IncorrectDataFormatDepartments",
+    "FoundCountryDuplicates"
   ],
   "ServerAssemblyName": "GD.UploadData.Server",
   "ServerNamespace": "GD.UploadData.Server",

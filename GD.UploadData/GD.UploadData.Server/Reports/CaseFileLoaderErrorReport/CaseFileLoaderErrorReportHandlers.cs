@@ -15,7 +15,7 @@ namespace GD.UploadData
       CaseFileLoaderErrorReport.ReportSessionId = reportSessionId;
       
       var tableData = new List<Structures.CaseFileLoaderErrorReport.CaseFile>();
-      foreach (var classifire in CaseFileLoaderErrorReport.LoaderErrorsStructure.Split(';'))
+      foreach (var classifire in CaseFileLoaderErrorReport.LoaderErrorsStructure.Split(Constants.Module.ReportParse))
         tableData.Add(Structures.CaseFileLoaderErrorReport.CaseFile.Create(reportSessionId,
                                                                            classifire.Split('|')[0],
                                                                            classifire.Split('|')[1],

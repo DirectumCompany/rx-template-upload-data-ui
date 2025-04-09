@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -290,7 +290,172 @@ namespace GD.UploadData.Structures.Module
     public List<GD.UploadData.Structures.Module.CaseFile> CaseFiles{ get; set; }
   }
   
+  /// <summary>
+  /// Контактное лицо.
+  /// </summary>
+  partial class Contact
+  {
+    public string FullName { get; set; }
+    
+    public string LastName { get; set; }
+
+    public string Name { get; set; }
+
+    public string MiddleName { get; set; }
+    
+    public string Company { get; set; }
+    
+    public string JobTitle { get; set; }
+    
+    public string Phone { get; set; }
+    
+    public string Fax { get; set; }
+    
+    public string Email { get; set; }
+    
+    public string Homepage { get; set; }
+    
+    public string Note { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  /// <summary>
+  /// Роль.
+  /// </summary>
+  partial class Role
+  {
+    public string Name { get; set; }
+    
+    public string Note { get; set; }
+    
+    public string IsSingleUser { get; set;}
+    
+    public string Recipients { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  /// <summary>
+  /// Приложение-обработчик.
+  /// </summary>
+  partial class AssociatedApplication
+  {
+    public string Name { get; set; }
+    
+    public string Extension { get; set; }
+    
+    public string MonitoringType { get; set; }
+    
+    public string OpenByDefaultForReading { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
   #endregion
+  
+  /// <summary>
+  /// Группа регистрации.
+  /// </summary>
+  partial class RegistrationGroup
+  {
+    public string Name { get; set; }
+    
+    public string Index { get; set; }
+    
+    public string ResponsibleEmployee { get; set; }
+    
+    public string DocumentFlow { get; set; }
+    
+    public string RecipientLinks { get; set; }
+    
+    public string Departments { get; set; }
+    
+    public string Description { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  /// <summary>
+  /// Журнал регистрации.
+  /// </summary>
+  partial class DocumentRegister
+  {
+    public string Name { get; set; }
+    
+    public string RegisterType { get; set; }
+    
+    public string Index { get; set; }
+    
+    public string DocumentFlow { get; set; }
+    
+    public string NumberOfDigitsInItem { get; set; }
+    
+    public string NumberedSection { get; set; }
+    
+    public string NumberingPeriod { get; set; }
+    
+    public string RegistrationGroup { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  /// <summary>
+  /// Виды документов.
+  /// </summary>
+  partial class DocumentKind
+  {
+    public string Name { get; set; }
+    
+    public string ShortName { get; set; }
+    
+    public string Code { get; set; }
+    
+    public string NumerationType { get; set; }
+    
+    public string DocumentFlow { get; set; }
+    
+    public string DocumentType { get; set; }
+    
+    public string DeadlineDays { get; set; }
+    
+    public string DeadlineHours { get; set; }
+    
+    public string Note { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  /// <summary>
+  /// Страна.
+  /// </summary>
+  partial class Country
+  {
+    public string Name { get; set; }
+    
+    public string Code { get; set; }
+    
+    public string Error { get; set; }
+  }
+  
+  
+  /// <summary>
+  /// Валюта.
+  /// </summary>
+  partial class Currency
+  {
+    public string Name { get; set; }
+    
+    public string ShortName { get; set; }
+    
+    public string FractionName { get; set; }
+    
+    public string AlphaCode { get; set; }
+    
+    public string NumericCode { get; set; }
+    
+    public string Error { get; set; }
+  }
   
   /// <summary>
   /// Муниципальный район.

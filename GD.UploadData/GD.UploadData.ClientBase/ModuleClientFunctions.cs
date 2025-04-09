@@ -91,7 +91,7 @@ namespace GD.UploadData.Client
     private void ShowCompaniesLoaderReport(List<Structures.Module.Company> companies)
     {
       var report = Reports.GetCompaniesLoaderErrorReport();
-      var errorText = string.Join(";", companies.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
+      var errorText = string.Join(Constants.Module.Parser, companies.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
                                                                            x.Name,
                                                                            x.LegalName,
                                                                            x.HeadCompany,
@@ -194,7 +194,7 @@ namespace GD.UploadData.Client
     private void ShowPersonsLoaderReport(List<Structures.Module.Person> persons)
     {
       var report = Reports.GetPersonsLoaderErrorReport();
-      var errorText = string.Join(";", persons.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}",
+      var errorText = string.Join(Constants.Module.Parser, persons.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}",
                                                                          x.LastName,
                                                                          x.FirstName,
                                                                          x.MiddleName,
@@ -280,7 +280,7 @@ namespace GD.UploadData.Client
     private void ShowJobTitlesLoaderReport(List<Structures.Module.JobTitle> jobTitles)
     {
       var report = Reports.GetJobTitlesLoaderErrorReport();
-      var errorText = string.Join(";", jobTitles.Select(x => string.Format("{0}|{1}|{2}",
+      var errorText = string.Join(Constants.Module.Parser, jobTitles.Select(x => string.Format("{0}|{1}|{2}",
                                                                            x.Name,
                                                                            x.Department,
                                                                            x.Error)).ToArray());
@@ -368,7 +368,7 @@ namespace GD.UploadData.Client
     private void ShowBusinessUnitsLoaderReport(List<Structures.Module.BusinessUnit> businessUnits)
     {
       var report = Reports.GetBusinessUnitsLoaderErrorReport();
-      var errorText = string.Join(";", businessUnits.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
+      var errorText = string.Join(Constants.Module.Parser, businessUnits.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}",
                                                                                x.Name,
                                                                                x.LegalName,
                                                                                x.HeadCompany,
@@ -462,7 +462,7 @@ namespace GD.UploadData.Client
     private void ShowDepartmentsLoaderReport(List<Structures.Module.Department> departments)
     {
       var report = Reports.GetDepartmentsLoaderErrorReport();
-      var errorText = string.Join(";", departments.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+      var errorText = string.Join(Constants.Module.Parser, departments.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                                                                              x.Name,
                                                                              x.ShortName,
                                                                              x.HeadOffice,
@@ -546,7 +546,7 @@ namespace GD.UploadData.Client
     private void ShowEmployeesLoaderReport(List<Structures.Module.Employee> employees)
     {
       var report = Reports.GetEmployeesLoaderErrorReport();
-      var errorText = string.Join(";", employees.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+      var errorText = string.Join(Constants.Module.Parser, employees.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
                                                                            x.Person,
                                                                            x.Login,
                                                                            x.BusinessUnit,
@@ -623,7 +623,7 @@ namespace GD.UploadData.Client
     private void ShowLoginsLoaderReport(List<Structures.Module.Login> logins)
     {
       var report = Reports.GetLoginsLoaderErrorReport();
-      var errorText = string.Join(";", logins.Select(x => string.Format("{0}|{1}",
+      var errorText = string.Join(Constants.Module.Parser, logins.Select(x => string.Format("{0}|{1}",
                                                                         x.Name,
                                                                         x.Error)).ToArray());
       report.LoaderErrorsStructure = errorText;
@@ -631,6 +631,596 @@ namespace GD.UploadData.Client
     }
     
     #endregion
+    
+    #region Контактные лица
+    
+    /// <summary>
+    /// Загрузить контактные лица.
+    /// </summary>
+    public void LoadContacts()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadContacts);
+      if (file == null)
+        return;
+      var contacts = GetContactsFromExcel(file);
+      contacts = Functions.Module.Remote.CreateOrUpdateContacts(contacts);
+      var contactsWithError = contacts.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (contactsWithError.Any())
+        ShowContactsLoaderReport(contactsWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(contacts.Count, contactsWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника контактные лица из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список контактных лиц.</returns>
+    public List<Structures.Module.Contact> GetContactsFromExcel(byte[] file)
+    {
+      var contacts = new List<Structures.Module.Contact>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 10)).IsEmpty())
+        {
+          var contact = Structures.Module.Contact.Create();
+          try
+          {
+            contact.FullName = string.Join(" ", range.Cell(1,1).Value.ToString()?.Trim(), range.Cell(1,2).Value.ToString()?.Trim(),
+                                           range.Cell(1,3).Value.ToString()?.Trim());
+            contact.LastName = range.Cell(1,1).Value.ToString()?.Trim();
+            contact.Name = range.Cell(1,2).Value.ToString()?.Trim();
+            contact.MiddleName = range.Cell(1,3).Value.ToString()?.Trim();
+            contact.Company = range.Cell(1,4).Value.ToString()?.Trim();
+            contact.JobTitle = range.Cell(1,5).Value.ToString()?.Trim();
+            contact.Phone = range.Cell(1,6).Value.ToString()?.Trim();
+            contact.Fax = range.Cell(1,7).Value.ToString()?.Trim();
+            contact.Email = range.Cell(1,8).Value.ToString()?.Trim();
+            contact.Homepage = range.Cell(1,9).Value.ToString()?.Trim();
+            contact.Note = range.Cell(1,10).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            contact.Error = ex.Message;
+          }
+          
+          contacts.Add(contact);
+          currentRow++;
+        }
+      }
+      return contacts;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Контактных лиц".
+    /// </summary>
+    /// <param name="contact">Список контактных лиц.</param>
+    private void ShowContactsLoaderReport(List<Structures.Module.Contact> contact)
+    {
+      var report = Reports.GetContactsLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, contact.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+                                                                         x.LastName, x.Name, x.MiddleName, x.Company, x.JobTitle, x.Phone,
+                                                                         x.Fax, x.Email, x.Homepage, x.Note, x.Error)));
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Роли
+    
+    /// <summary>
+    /// Загрузить роли.
+    /// </summary>
+    public void LoadRoles()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadRoles);
+      if (file == null)
+        return;
+      var roles = GetRolesFromExcel(file);
+      roles = Functions.Module.Remote.CreateOrUpdateRoles(roles);
+      var rolesWithError = roles.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (rolesWithError.Any())
+        ShowRolesLoaderReport(rolesWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(roles.Count, rolesWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника Роли из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список ролей.</returns>
+    public List<Structures.Module.Role> GetRolesFromExcel(byte[] file)
+    {
+      var roles = new List<Structures.Module.Role>();
+      
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 4)).IsEmpty())
+        {
+          var role = Structures.Module.Role.Create();
+          try
+          {
+            role.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            role.Note = range.Cell(1,2).Value.ToString()?.Trim();
+            role.Recipients = range.Cell(1,3).Value.ToString()?.Trim();
+            role.IsSingleUser = range.Cell(1,4).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            role.Error = ex.Message;
+          }
+          
+          roles.Add(role);
+          currentRow++;
+        }
+      }
+      return roles;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Ролей".
+    /// </summary>
+    /// <param name="roles">Список должностей.</param>
+    private void ShowRolesLoaderReport(List<Structures.Module.Role> roles)
+    {
+      var report = Reports.GetRolesLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, roles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}", x.Name, x.Note, x.IsSingleUser, x.Recipients, x.Error)));
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Приложения-обработчики
+    
+    /// <summary>
+    /// Загрузить приложения обработчики.
+    /// </summary>
+    public void LoadAssociatedApplications()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadAssociatedApplications);
+      if (file == null)
+        return;
+      var applications = GetAssociatedApplicationsFromFile(file);
+      applications = Functions.Module.Remote.CreateOrUpdateAssociatedApplications(applications);
+      var applicationsWithError = applications.Where(a => !string.IsNullOrEmpty(a.Error));
+      if (applicationsWithError.Any())
+        ShowAssociatedApplicationsLoaderReport(applicationsWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(applications.Count, applicationsWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника обработчики приложений из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список обработчиков приложений.</returns>
+    public List<Structures.Module.AssociatedApplication> GetAssociatedApplicationsFromFile(byte[] file)
+    {
+      var applications = new List<Structures.Module.AssociatedApplication>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 4)).IsEmpty())
+        {
+          var application = Structures.Module.AssociatedApplication.Create();
+          try
+          {
+            application.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            application.Extension = range.Cell(1,2).Value.ToString()?.Trim();
+            application.MonitoringType = range.Cell(1,3).Value.ToString()?.Trim();
+            application.OpenByDefaultForReading = range.Cell(1,4).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            application.Error = ex.Message;
+          }
+          
+          applications.Add(application);
+          currentRow++;
+        }
+      }
+      
+      return applications;
+    }
+
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Обработчиков приложений".
+    /// </summary>
+    /// <param name="applications">Список обработчиков приложений.</param>
+    public void ShowAssociatedApplicationsLoaderReport(List<Structures.Module.AssociatedApplication> applications)
+    {
+      var report = Reports.GetAssociatedApplicationLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, applications.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|",
+                                                                              a.Name, a.Extension, a.MonitoringType,
+                                                                              a.OpenByDefaultForReading, a.Error)));
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #endregion
+    
+    #region Группы регистрации
+    
+    /// <summary>
+    /// Загрузить группы регистрации.
+    /// </summary>
+    public void LoadRegistrationGroup()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadRegistrationGroup);
+      if (file == null)
+        return;
+      var registrationGroups = GetRegistrationGroupFromExcel(file);
+      registrationGroups = Functions.Module.Remote.CreateOrUpdateRegistrationGroup(registrationGroups);
+      var registrationGroupWithError = registrationGroups.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (registrationGroupWithError.Any())
+        ShowRegistrationGroupsLoaderReport(registrationGroupWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(registrationGroups.Count, registrationGroupWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника группы регистрации из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список групп регистрации.</returns>
+    public List<Structures.Module.RegistrationGroup> GetRegistrationGroupFromExcel(byte[] file)
+    {
+      var registrationGroups = new List<Structures.Module.RegistrationGroup>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 7)).IsEmpty())
+        {
+          var registrationGroup = Structures.Module.RegistrationGroup.Create();
+          
+          try
+          {
+            registrationGroup.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            registrationGroup.Index = range.Cell(1,2).Value.ToString()?.Trim();
+            registrationGroup.ResponsibleEmployee = range.Cell(1,3).Value.ToString()?.Trim();
+            registrationGroup.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
+            registrationGroup.RecipientLinks = range.Cell(1,5).Value.ToString()?.Trim();
+            registrationGroup.Departments = range.Cell(1,6).Value.ToString()?.Trim();
+            registrationGroup.Description = range.Cell(1,7).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            registrationGroup.Error = ex.Message;
+          }
+          currentRow++;
+          registrationGroups.Add(registrationGroup);
+        }
+      }
+      return registrationGroups;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Групп регистрации".
+    /// </summary>
+    /// <param name="registrationsGroups">Список групп регистрации.</param>
+    public void ShowRegistrationGroupsLoaderReport(List<Structures.Module.RegistrationGroup> registrationsGroups)
+    {
+      var report = Reports.GetRegistrationGroupLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, registrationsGroups.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                                                                                     a.Name, a.Index, a.ResponsibleEmployee,
+                                                                                     a.DocumentFlow, a.RecipientLinks,
+                                                                                     a.Departments, a.Description, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Журналы регистраций
+    
+    /// <summary>
+    /// Загрузить журнал регистрации.
+    /// </summary>
+    public void LoadDocumentRegister()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentRegister);
+      if (file == null)
+        return;
+      var documentRegisters = GetDocumentRegisterFromExcel(file);
+      documentRegisters = Functions.Module.Remote.CreateorUpdateDocumentRegister(documentRegisters);
+      var documentRegistersWithError = documentRegisters.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (documentRegistersWithError.Any())
+        ShowDocumentRegisterLoaderReport(documentRegistersWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(documentRegisters.Count, documentRegistersWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника Журнал регистрации из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список журналова регистрации.</returns>
+    public List<Structures.Module.DocumentRegister> GetDocumentRegisterFromExcel(byte[] file)
+    {
+      var documentRegisters = new List<Structures.Module.DocumentRegister>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 8)).IsEmpty())
+        {
+          var documentRegister = Structures.Module.DocumentRegister.Create();
+          
+          try
+          {
+            documentRegister.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            documentRegister.RegisterType = range.Cell(1,2).Value.ToString()?.Trim();
+            documentRegister.Index = range.Cell(1,3).Value.ToString()?.Trim();
+            documentRegister.DocumentFlow = range.Cell(1,4).Value.ToString()?.Trim();
+            documentRegister.NumberOfDigitsInItem = range.Cell(1,5).Value.ToString()?.Trim();
+            documentRegister.NumberedSection = range.Cell(1,6).Value.ToString()?.Trim();
+            documentRegister.NumberingPeriod = range.Cell(1,7).Value.ToString()?.Trim();
+            documentRegister.RegistrationGroup = range.Cell(1,8).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            documentRegister.Error = ex.Message;
+          }
+          currentRow++;
+          documentRegisters.Add(documentRegister);
+        }
+      }
+      return documentRegisters;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке журналова регистрации".
+    /// </summary>
+    /// <param name="documentRegisters">Список журналов регистрации.</param>
+    public void ShowDocumentRegisterLoaderReport(List<Structures.Module.DocumentRegister> documentRegisters)
+    {
+      var report = Reports.GetDocumentRegisterLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, documentRegisters.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+                                                                                   a.Name, a.RegisterType, a.Index,
+                                                                                   a.DocumentFlow, a.NumberOfDigitsInItem,
+                                                                                   a.NumberedSection, a.NumberingPeriod,
+                                                                                   a.RegistrationGroup, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Виды документов
+    
+    /// <summary>
+    /// Загрузить виды документов.
+    /// </summary>
+    public void LoadDocumentKinds()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadDocumentKinds);
+      if (file == null)
+        return;
+      var documentKinds = GetDocumentKindFromExcel(file);
+      documentKinds = Functions.Module.Remote.CreateOrUpdateDocumentKinds(documentKinds);
+      var documentKindsWithError = documentKinds.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (documentKindsWithError.Any())
+        ShowDocumentKindsLoaderReport(documentKindsWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(documentKinds.Count, documentKindsWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника виды документов из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список видов документов.</returns>
+    public List<Structures.Module.DocumentKind> GetDocumentKindFromExcel(byte[] file)
+    {
+      var documentKinds = new List<Structures.Module.DocumentKind>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 9)).IsEmpty())
+        {
+          var documentKind = Structures.Module.DocumentKind.Create();
+          
+          try
+          {
+            documentKind.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            documentKind.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
+            documentKind.Code = range.Cell(1,3).Value.ToString()?.Trim();
+            documentKind.NumerationType = range.Cell(1,4).Value.ToString()?.Trim();
+            documentKind.DocumentFlow = range.Cell(1,5).Value.ToString()?.Trim();
+            documentKind.DocumentType = range.Cell(1,6).Value.ToString()?.Trim();
+            documentKind.DeadlineDays = range.Cell(1,7).Value.ToString()?.Trim();
+            documentKind.DeadlineHours = range.Cell(1,8).Value.ToString()?.Trim();
+            documentKind.Note = range.Cell(1,9).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            documentKind.Error = ex.Message;
+          }
+          currentRow++;
+          documentKinds.Add(documentKind);
+        }
+      }
+      return documentKinds;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Видов документов".
+    /// </summary>
+    /// <param name="documentKinds">Список видов документов.</param>
+    public void ShowDocumentKindsLoaderReport(List<Structures.Module.DocumentKind> documentKinds)
+    {
+      var report = Reports.GetDocumentKindsLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, documentKinds.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+                                                                               a.Name, a.ShortName, a.Code,
+                                                                               a.NumerationType, a.DocumentFlow,
+                                                                               a.DocumentType, a.DeadlineDays,
+                                                                               a.DeadlineHours, a.Note, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Страны
+    
+    /// <summary>
+    /// Загрузить страны.
+    /// </summary>
+    public void LoadCountries()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadCountries);
+      if (file == null)
+        return;
+      var countries = GetСountriesFromExcel(file);
+      countries = Functions.Module.Remote.CreateOrUpdateCountries(countries);
+      var countriesWithError = countries.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (countriesWithError.Any())
+        ShowCountriesLoaderReport(countriesWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(countries.Count, countriesWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника страны из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список стран.</returns>
+    public List<Structures.Module.Country> GetСountriesFromExcel(byte[] file)
+    {
+      var countries = new List<Structures.Module.Country>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 2)).IsEmpty())
+        {
+          var country = Structures.Module.Country.Create();
+          
+          try
+          {
+            country.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            country.Code = range.Cell(1,2).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            country.Error = ex.Message;
+          }
+          currentRow++;
+          countries.Add(country);
+        }
+      }
+      return countries;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Стран".
+    /// </summary>
+    /// <param name="jobTitles">Список стран.</param>
+    public void ShowCountriesLoaderReport(List<Structures.Module.Country> countries)
+    {
+      var report = Reports.GetCountriesLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, countries.Select(a => string.Format("{0}|{1}|{2}", a.Name, a.Code, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
+    
+    #endregion
+    
+    #region Валюты
+    
+    /// <summary>
+    /// Загрузить валюты.
+    /// </summary>
+    public void LoadCurrencies()
+    {
+      var file = GetExcelFromFileSelectDialog(Resources.LoadCurrencies);
+      if (file == null)
+        return;
+      var currencies = GetCurrenciesFromExcel(file);
+      currencies = Functions.Module.Remote.CreateOrUpdateCurrencies(currencies);
+      var currenciesWithError = currencies.Where(c => !string.IsNullOrEmpty(c.Error));
+      if (currenciesWithError.Any())
+        ShowCurrenciesLoaderReport(currenciesWithError.ToList());
+      Dialogs.NotifyMessage(Resources.EndOfLoadNotifyMessageTextFormat(currencies.Count, currenciesWithError.Count()));
+    }
+    
+    /// <summary>
+    /// Получить записи справочника валюты из Excel.
+    /// </summary>
+    /// <param name="file">Файл.</param>
+    /// <returns>Список валют.</returns>
+    public List<Structures.Module.Currency> GetCurrenciesFromExcel(byte[] file)
+    {
+      var currencies = new List<Structures.Module.Currency>();
+      using (var memory = new System.IO.MemoryStream(file))
+      {
+        var workbook = new XLWorkbook(memory);
+        var worksheet = workbook.Worksheet(1);
+        
+        IXLRange range;
+        var currentRow = 2;
+        while(!(range = worksheet.Range(currentRow, 1, currentRow, 5)).IsEmpty())
+        {
+          var currency = Structures.Module.Currency.Create();
+          
+          try
+          {
+            currency.Name = range.Cell(1,1).Value.ToString()?.Trim();
+            currency.ShortName = range.Cell(1,2).Value.ToString()?.Trim();
+            currency.FractionName = range.Cell(1,3).Value.ToString()?.Trim();
+            currency.AlphaCode = range.Cell(1,4).Value.ToString()?.Trim();
+            currency.NumericCode = range.Cell(1,5).Value.ToString()?.Trim();
+          }
+          catch (Exception ex)
+          {
+            currency.Error = ex.Message;
+          }
+          currentRow++;
+          currencies.Add(currency);
+        }
+      }
+      return currencies;
+    }
+    
+    /// <summary>
+    /// Показать отчет "Ошибки  при загрузке Валют".
+    /// </summary>
+    /// <param name="jobTitles">Список валют.</param>
+    public void ShowCurrenciesLoaderReport(List<Structures.Module.Currency> currencies)
+    {
+      var report = Reports.GetCurrenciesLoaderErrorReport();
+      var errorText = string.Join(Constants.Module.Parser, currencies.Select(a => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+                                                                            a.Name, a.ShortName, a.FractionName,
+                                                                            a.AlphaCode, a.NumericCode, a.Error)).ToArray());
+      report.LoaderErrorsStructure = errorText;
+      report.Open();
+    }
     
     #endregion
     
@@ -723,7 +1313,7 @@ namespace GD.UploadData.Client
     private void ShowClassifierLoaderReport(List<Structures.Module.ClassifierBase> classifiers)
     {
       var report = Reports.GetClassifierLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", classifiers.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Code, x.Name, x.FullCode, x.Error)).ToArray());
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, classifiers.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Code, x.Name, x.FullCode, x.Error)).ToArray());
       report.Open();
     }
     
@@ -820,7 +1410,7 @@ namespace GD.UploadData.Client
     private void ShowFileRetentionPeriodLoaderReport(List<Structures.Module.FileRetentionPeriod> fileRetentionPeriods)
     {
       var report = Reports.GetFileRetentionPeriodLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", fileRetentionPeriods.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Name, x.RetentionPeriod, x.Note, x.Error)).ToArray());
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, fileRetentionPeriods.Select(x => string.Format("{0}|{1}|{2}|{3}", x.Name, x.RetentionPeriod, x.Note, x.Error)).ToArray());
       report.Open();
     }
     
@@ -887,7 +1477,7 @@ namespace GD.UploadData.Client
     private void ShowCaseFileLoaderReport(List<Structures.Module.CaseFile> caseFiles)
     {
       var report = Reports.GetCaseFileLoaderErrorReport();
-      report.LoaderErrorsStructure = string.Join(";", caseFiles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
+      report.LoaderErrorsStructure = string.Join(Constants.Module.Parser, caseFiles.Select(x => string.Format("{0}|{1}|{2}|{3}|{4}|{5}",
                                                                                           x.Department,
                                                                                           x.RetentionPeriod,
                                                                                           x.Title,
@@ -974,6 +1564,7 @@ namespace GD.UploadData.Client
     }
 
     #endregion
+    
     #endregion
     
     #region ФИАС
@@ -1058,7 +1649,7 @@ namespace GD.UploadData.Client
     private void ShowCitiesLoaderReport(List<Structures.Module.City> cities)
     {
       var report = Reports.GetCitiesLoaderErrorReport();
-      var errorText = string.Join(";", cities.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, cities.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                         x.Name,
                                                                         x.ObjectGUID,
                                                                         x.TypeName,
@@ -1150,7 +1741,7 @@ namespace GD.UploadData.Client
     private void ShowMunicipalAreasLoaderReport(List<Structures.Module.MunicipalArea> municipalAreas)
     {
       var report = Reports.GetMunicipalAreasLoaderErrorReport();
-      var errorText = string.Join(";", municipalAreas.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, municipalAreas.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                                 x.Name,
                                                                                 x.ObjectGUID,
                                                                                 x.TypeName,
@@ -1160,7 +1751,7 @@ namespace GD.UploadData.Client
     }
 
     #endregion
- 
+    
     #region Поселения с ФИАС
     
     /// <summary>
@@ -1241,7 +1832,7 @@ namespace GD.UploadData.Client
     private void ShowSettlementsLoaderReport(List<Structures.Module.Settlement> settlements)
     {
       var report = Reports.GetSettlementsLoaderErrorReport();
-      var errorText = string.Join(";", settlements.Select(x => string.Format("{0}|{1}|{2}|{3}",
+      var errorText = string.Join(Constants.Module.Parser, settlements.Select(x => string.Format("{0}|{1}|{2}|{3}",
                                                                              x.Name,
                                                                              x.ObjectGUID,
                                                                              x.TypeName,
