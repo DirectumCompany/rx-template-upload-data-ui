@@ -13,7 +13,7 @@
 Чтобы произвести создание записей справочников в Directum RX, достаточно заполнить специально сформированные шаблоны Excel и загрузить данные из обложки.
 
 Шаблоны можно найти в папке [Шаблоны](https://github.com/DirectumCompany/rx-template-upload-data-ui/tree/main/Template).
-Общее описание и инструкцию по использованию шаблона см. [тут] (https://github.com/DirectumCompany/rx-template-upload-data-ui/tree/main/docs)
+Общее описание и инструкцию по использованию шаблона см. [тут](https://github.com/DirectumCompany/rx-template-upload-data-ui/tree/main/docs)
 
 Шаблон отличается от утилиты https://github.com/DirectumCompany/rx-util-importdata-net-core тем, что позволяет загружать записи с обложки модуля любым сотрудником (если есть права на справочники). Также есть различия в перечне загружаемых справочников. 
 После каждой загрузки строится отчет об успешно/неуспешно загруженных записях.
