@@ -1,4 +1,4 @@
-# rx-template-upload-data-ui
+# Загрузка данных с обложки из xlsx-файлов
 Репозиторий с шаблоном разработки «Загрузка данных с обложки из xlsx-файлов».
 
 !!! Шаблон поддерживается в версиях Directum RX до 4.9 включительно. После выхода официального релиза библиотеки [ClosedXML](https://github.com/ClosedXML/ClosedXML/tree/develop) с поддержкой DocumentFormat.OpenXml.dll версии 3.0.1 и выше возможно обновление на 4.10.
@@ -29,15 +29,20 @@
 2. Установленное решение "Обращения граждан" (если требуется загрузка справочников федерального классификатора обращений граждан). Если данное решение не установлено, то требуется модификация. Необходимо удалить/закомментировать функции, которые загружают информацию о федеральном классификаторе обращений.
 
 ### Установка для ознакомления
-1. Склонировать репозиторий https://github.com/DirectumCompany/rx-template-upload-data-ui.git в папку.
-2. Указать в _ConfigSettings.xml DDS:
+1. Склонировать репозиторий с rx-template-upload-data-ui в папку.
+2. Указать в config.yml в разделе DevelopmentStudio:
 ```xml
-<block name="REPOSITORIES">
-  <repository folderName="Base" solutionType="Base" url="" /> 
-  <repository folderName="<Папка из п.1>" solutionType="Work" 
-     url="https://github.com/DirectumCompany/rx-template-upload-data-ui.git" />
-</block>
+   GIT_ROOT_DIRECTORY: '<Папка из п.1>'
+   REPOSITORIES:
+      repository:
+      -   '@folderName': 'work'
+          '@solutionType': 'Work'
+          '@url': https://github.com/DirectumCompany/rx-template-upload-data-ui.git'
+      -   '@folderName': 'base'
+          '@solutionType': 'Base'
+          '@url': ''
 ```
+
 ### Установка для использования на проекте
 
 Возможные варианты:
@@ -45,32 +50,44 @@
 #### A. Fork репозитория.
 1. Сделать fork репозитория rx-template-upload-data-ui для своей учетной записи.
 2. Склонировать созданный в п. 1 репозиторий в папку.
-3. Указать в _ConfigSettings.xml DDS:
-``` xml
-<block name="REPOSITORIES">
-  <repository folderName="Base" solutionType="Base" url="" /> 
-  <repository folderName="<Папка из п.2>" solutionType="Work" 
-     url="<Адрес репозитория gitHub учетной записи пользователя из п. 1>" />
-</block>
+3. Указать в config.yml в разделе DevelopmentStudio:
+```xml
+   GIT_ROOT_DIRECTORY: '<Папка из п.2>'
+   REPOSITORIES:
+      repository:
+      -   '@folderName': 'work'
+          '@solutionType': 'Work'
+          '@url': https://github.com/DirectumCompany/rx-template-upload-data-ui.git'
+      -   '@folderName': 'base'
+          '@solutionType': 'Base'
+          '@url': ''
 ```
+
 #### B. Подключение на базовый слой.
 Вариант не рекомендуется, так как при выходе версии шаблона разработки не гарантируется обратная совместимость.
-1. Склонировать репозиторий https://github.com/DirectumCompany/rx-template-upload-data-ui.git в папку.
-2. Указать в _ConfigSettings.xml DDS:
+1. Склонировать репозиторий rx-template-upload-data-ui в папку.
+2. Указать в config.yml в разделе DevelopmentStudio:
 ```xml
-<block name="REPOSITORIES">
-  <repository folderName="Base" solutionType="Base" url="" /> 
-  <repository folderName="<Папка из п.1>" solutionType="Base" 
-     url="https://github.com/DirectumCompany/rx-template-upload-data-ui.git" />
-  <repository folderName="<Папка для рабочего слоя>" solutionType="Work" 
-     url="<Адрес репозитория для рабочего слоя>" />
-</block>
+   GIT_ROOT_DIRECTORY: '<Папка из п.1>'
+   REPOSITORIES:
+      repository:
+      -   '@folderName': 'work'
+          '@solutionType': 'Work'
+          '@url': '<Адрес репозитория для рабочего слоя>'
+      -   '@folderName': 'base'
+          '@solutionType': 'Base'
+          '@url': ''
+      -   '@folderName': 'base'
+          '@solutionType': 'Base'
+          '@url': 'https://github.com/DirectumCompany/rx-template-upload-data-ui.git'
 ```
 
 #### C. Копирование репозитория в систему контроля версий.
 Рекомендуемый вариант для проектов внедрения.
 1. В системе контроля версий с поддержкой git создать новый репозиторий.
-2. Склонировать репозиторий https://github.com/DirectumCompany/rx-template-upload-data-ui.git в папку с ключом --mirror.
+2. Склонировать репозиторий rx-template-upload-data-ui в папку с ключом `--mirror`.
 3. Перейти в папку из п. 2.
 4. Импортировать клонированный репозиторий в систему контроля версий командой:
-git push –mirror <Адрес репозитория из п. 1>
+`git push –mirror <Адрес репозитория из п. 1>`
+
+
