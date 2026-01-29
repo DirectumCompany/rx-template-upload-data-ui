@@ -6,7 +6,7 @@ using Sungero.CoreEntities;
 
 namespace GD.UploadDataSolution.Server
 {
-  public class ModuleJobs
+  public partial class ModuleJobs
   {
 
   }

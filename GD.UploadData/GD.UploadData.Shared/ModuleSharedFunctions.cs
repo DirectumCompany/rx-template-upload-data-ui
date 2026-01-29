@@ -6,7 +6,7 @@ using Sungero.CoreEntities;
 
 namespace GD.UploadData.Shared
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
 
   }

@@ -8,7 +8,7 @@ using Sungero.Docflow;
 
 namespace GD.UploadData.Client
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
 
     #region Загрузка организационной структуры

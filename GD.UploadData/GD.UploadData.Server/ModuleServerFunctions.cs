@@ -11,7 +11,7 @@ using Sungero.Docflow;
 
 namespace GD.UploadData.Server
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
     #region Разделы классификатора обращений
     
