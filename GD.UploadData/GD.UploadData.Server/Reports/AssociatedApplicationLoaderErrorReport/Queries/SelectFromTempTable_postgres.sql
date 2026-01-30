@@ -1,0 +1,3 @@
+select *
+from Settings_Reports_AssociatedApplicationLoaderError
+where ReportSessionId = @ReportSessionId

@@ -1,0 +1,3 @@
+select *
+from UploadData_Reports_MunicipalAreasLoaderError
+where ReportSessionId = @ReportSessionId
