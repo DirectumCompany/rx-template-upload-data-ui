@@ -391,7 +391,7 @@
         }
       ],
       "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
-      "ReturnTypeFullName": "System.Collections.Generic.List",
+      "ReturnTypeFullName": "System.Collections.Generic.List`1[[System.String]]",
       "WebApiRequestType": "Get"
     },
     {
@@ -404,7 +404,7 @@
         }
       ],
       "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
-      "ReturnTypeFullName": "System.Collections.Generic.List",
+      "ReturnTypeFullName": "System.Collections.Generic.List`1[[System.String]]",
       "WebApiRequestType": "Get"
     },
     {
@@ -417,7 +417,7 @@
         }
       ],
       "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
-      "ReturnTypeFullName": "System.Collections.Generic.List",
+      "ReturnTypeFullName": "System.Collections.Generic.List`1[[System.String]]",
       "WebApiRequestType": "Get"
     }
   ],
